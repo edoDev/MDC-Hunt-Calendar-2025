@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MDC Deer Hunting Calendar - Pevely, MO (Sep 1, 2025 - Jan 15, 2026)</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/suncalc/1.9.0/suncalc.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
+  
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #f4f2e8 0%, #e8e4d8 100%);
+    padding: 20px;
+    color: #45372b;
+  }
+  
+  .container {
+    max-width: 1240px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(58, 94, 9, 0.15);
+    overflow: hidden;
+  }
+  
+  .header {
+    background: linear-gradient(135deg, #3a5e09 0%, #2d4807 100%);
+    color: white;
+    padding: 24px 30px;
+    text-align: center;
+  }
+  
+  .header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+  }
+  
+  .header p {
+    font-size: 14px;
+    opacity: 0.9;
+    font-weight: 400;
+  }
+  
+  .info-banner {
+    background: #fff3cd;
+    border-left: 4px solid #e47b30;
+    padding: 12px 20px;
+    margin: 0;
+    font-size: 13px;
+    color: #856404;
+  }
+  
+  .info-banner strong {
+    color: #3a5e09;
+  }
+  
+  .canvas-wrapper {
+    padding: 20px;
+    background: #fafaf8;
+    position: relative;
+  }
+  
+  canvas {
+    display: block;
+    margin: 0 auto;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    cursor: crosshair;
+  }
+  
+  .tooltip {
+    position: absolute;
+    background: rgba(45, 72, 7, 0.96);
+    color: white;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.6;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+    max-width: 320px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+    z-index: 1000;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  
+  .tooltip.visible {
+    opacity: 1;
+  }
+  
+  .tooltip strong {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 6px;
+    color: #e47b30;
+    font-weight: 600;
+  }
+  
+  .tooltip-line {
+    margin: 4px 0;
+  }
+  
+  .legend {
+    padding: 20px 30px;
+    background: white;
+    border-top: 2px solid #f0ede3;
+  }
+  
+  .legend h3 {
+    font-size: 16px;
+    color: #3a5e09;
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+  
+  .legend-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+  }
+  
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+  }
+  
+  .legend-color {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    border: 1px solid rgba(0,0,0,0.1);
+    flex-shrink: 0;
+  }
+  
+  .footer {
+    background: #f4f2e8;
+    padding: 16px 30px;
+    text-align: center;
+    font-size: 12px;
+    color: #666;
+    border-top: 1px solid #e0ddd0;
+  }
+  
+  .sources {
+    background: #fafaf8;
+    padding: 20px 30px;
+    border-top: 2px solid #e0ddd0;
+  }
+  
+  .sources h3 {
+    font-size: 14px;
+    color: #3a5e09;
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+  
+  .sources ul {
+    list-style: none;
+    padding: 0;
+    font-size: 12px;
+    line-height: 1.8;
+    color: #666;
+  }
+  
+  .sources li {
+    margin-bottom: 6px;
+    padding-left: 20px;
+    position: relative;
+  }
+  
+  .sources li:before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: #3a5e09;
+    font-weight: bold;
+  }
+  
+  .sources a {
+    color: #3a5e09;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  
+  .sources a:hover {
+    text-decoration: underline;
+  }
+  
+  .controls {
+    padding: 15px 30px;
+    background: #fafaf8;
+    border-top: 1px solid #e0ddd0;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .btn {
+    padding: 8px 16px;
+    background: #3a5e09;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-family: 'Montserrat', sans-serif;
+  }
+  
+  .btn:hover {
+    background: #2d4807;
+  }
+  
+  .btn:active {
+    transform: translateY(1px);
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>🦌 MDC Deer Hunting Calendar 2025-2026</h1>
+    <p>Pevely, Missouri (Jefferson County - CWD Management Zone) • September 1, 2025 - January 15, 2026</p>
+  </div>
+  
+  <div class="info-banner">
+    <strong>Jefferson County CWD Zone:</strong> Additional antlerless permits available. Enhanced testing and regulations apply. Check MDC website for current permit availability.
+  </div>
+  
+  <div class="canvas-wrapper">
+    <canvas id="calendar"></canvas>
+    <div id="tooltip" class="tooltip"></div>
+  </div>
+  
+  <div class="controls">
+    <button class="btn" onclick="downloadCalendar()">📥 Download PNG</button>
+    <button class="btn" onclick="window.print()">🖨️ Print Calendar</button>
+    <button class="btn" onclick="toggleLegend()">📋 Toggle Legend</button>
+  </div>
+  
+  <div class="legend" id="legend">
+    <h3>Season Legend</h3>
+    <div class="legend-grid">
+      <div class="legend-item">
+        <div class="legend-color" style="background: #3a5e09;"></div>
+        <span>Archery Season</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background: #e47b30;"></div>
+        <span>Firearms Season</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background: #ffd700;"></div>
+        <span>Youth Season</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background: #8b4513;"></div>
+        <span>Alternative Methods</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background: #dc143c;"></div>
+        <span>Antlerless Portion (CWD)</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background: linear-gradient(90deg, #1a1a2e 0%, #4a90e2 25%, #f0f0f0 50%, #4a90e2 75%, #1a1a2e 100%);"></div>
+        <span>Moon Phases (Hunt Tips)</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background: linear-gradient(90deg, #d32f2f 0%, #f57c00 50%, #388e3c 100%);"></div>
+        <span>Rut Activity Level</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background: linear-gradient(90deg, #1976d2 0%, #ffd54f 50%, #ff6f00 100%);"></div>
+        <span>Daylight Hours</span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="footer">
+    Missouri Department of Conservation • Jefferson County • Hover over calendar for detailed information • Press 'L' to toggle legend • Today: November 5, 2025
+  </div>
+  
+  <div class="sources">
+    <h3>Data Sources & Notes</h3>
+    <ul>
+      <li><strong>Deer Season Dates:</strong> Missouri Department of Conservation 2025-2026 Deer Hunting Regulations Summary (<a href="https://mdc.mo.gov" target="_blank">mdc.mo.gov</a>)</li>
+      <li><strong>CWD Management Zone:</strong> Jefferson County is designated as a CWD Management Area. Additional antlerless deer harvest opportunities are available during archery season with proper permits. Check MDC website for current county-specific regulations and permit availability.</li>
+      <li><strong>Rut Activity:</strong> Based on Missouri whitetail deer breeding patterns (peak rut typically November 6-15 in this region). Actual timing may vary ±5 days based on weather and moon phase.</li>
+      <li><strong>Moon Phase Data:</strong> Calculated using astronomical algorithms. Hunting tips based on documented deer movement patterns correlated with lunar cycles.</li>
+      <li><strong>Sunrise/Sunset Times:</strong> Computed using SunCalc library for Pevely, MO coordinates (38.2834°N, 90.3951°W).</li>
+      <li><strong>Important:</strong> This calendar is for planning purposes. Always verify current regulations, season dates, and permit requirements at <a href="https://mdc.mo.gov" target="_blank">mdc.mo.gov</a> or by calling your local MDC office before hunting.</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+// Configuration
+const config = {
+  canvas: {
+    width: 1200,
+    height: 420,
+    margin: { top: 60, right: 20, bottom: 20, left: 160 }
+  },
+  colors: {
+    mdcGreen: '#3a5e09',
+    mdcBrown: '#45372b',
+    mdcOrange: '#e47b30',
+    mdcBeige: '#f4f2e8',
+    archery: '#3a5e09',
+    firearms: '#e47b30',
+    youth: '#ffd700',
+    alternative: '#8b4513',
+    antlerless: '#dc143c',
+    moon: '#4a90e2',
+    daylight: '#ffd966',
+    rut: '#d32f2f',
+    today: '#e74c3c',
+    grid: '#e0e0e0'
+  },
+  location: {
+    lat: 38.2834,
+    lon: -90.3951,
+    name: 'Pevely, MO',
+    county: 'Jefferson',
+    cwdZone: true
+  }
+};
+
+// Date range
+const startDate = new Date('2025-09-01');
+const endDate = new Date('2026-01-15');
+const today = new Date('2025-11-05');
+const totalDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+
+// Deer hunting seasons data
+const seasons = [
+  {
+    name: 'Archery',
+    type: 'archery',
+    segments: [
+      { start: '2025-09-15', end: '2025-11-14' },
+      { start: '2025-11-26', end: '2026-01-15' }
+    ],
+    limits: 'Antlered: 1 per permit; Antlerless: Unlimited with permits',
+    notes: 'Statewide season; Use archery equipment; Jefferson County allows 4 firearms antlerless permits'
+  },
+  {
+    name: 'Firearms - November',
+    type: 'firearms',
+    segments: [
+      { start: '2025-11-15', end: '2025-11-25', label: 'November' }
+    ],
+    limits: 'Antlered: 1 (all firearms portions combined); Antlerless: Up to 4 permits in Jefferson County',
+    notes: '11-day season; Most popular hunting period; Mandatory CWD sampling opening weekend'
+  },
+  {
+    name: 'Firearms - CWD',
+    type: 'cwd',
+    segments: [
+      { start: '2025-11-26', end: '2025-11-30', label: 'CWD' }
+    ],
+    limits: 'Any unfilled firearms permits; Antlered: 1 (firearms season combined)',
+    notes: 'CWD Management Zone counties only; Firearms season to increase harvest; Overlaps with archery'
+  },
+  {
+    name: 'Firearms - Late Antlerless',
+    type: 'firearms',
+    segments: [
+      { start: '2025-12-06', end: '2025-12-14', label: 'Late Antlerless' }
+    ],
+    limits: 'Antlerless only; Per county quotas',
+    notes: 'Open counties only; Check MDC regulations for county-specific availability'
+  },
+  {
+    name: 'Youth Season',
+    type: 'youth',
+    segments: [
+      { start: '2025-11-01', end: '2025-11-02' }
+    ],
+    limits: 'Multiple deer allowed; Adult mentor required',
+    notes: 'Ages 6-15 or 16-17 with hunter ed; Any legal method; Occurs during archery season'
+  },
+  {
+    name: 'Alternative Methods',
+    type: 'alternative',
+    segments: [
+      { start: '2025-12-27', end: '2026-01-06' }
+    ],
+    limits: 'Antlered: 1; Antlerless: Unlimited with permits',
+    notes: 'Muzzleloader, atlatl, or archery equipment; Great late-season opportunity'
+  }
+];
+
+// Rut activity data (Missouri whitetail rut timing)
+const rutPeriods = [
+  { start: '2025-10-15', end: '2025-10-24', intensity: 0.3, phase: 'Pre-Rut', tip: 'Bucks starting to spar; scout for rubs and scrapes' },
+  { start: '2025-10-25', end: '2025-11-05', intensity: 0.7, phase: 'Seeking Phase', tip: 'Peak movement! Bucks actively searching; all-day sits pay off' },
+  { start: '2025-11-06', end: '2025-11-15', intensity: 1.0, phase: 'Peak Rut', tip: 'PRIME TIME! Maximum breeding activity; best hunting of the year' },
+  { start: '2025-11-16', end: '2025-11-25', intensity: 0.6, phase: 'Post-Rut', tip: 'Bucks still checking for late estrous does; focus on bedding areas' },
+  { start: '2025-11-26', end: '2025-12-05', intensity: 0.2, phase: 'Late Rut', tip: 'Secondary rut possible; mature bucks return to feeding patterns' }
+];
+
+// Major hunting dates (removed emoji icons)
+const majorDates = [
+  { date: '2025-09-15', label: 'Archery Opens' },
+  { date: '2025-11-01', label: 'Youth Season' },
+  { date: '2025-11-06', label: 'Peak Rut' },
+  { date: '2025-11-15', label: 'Firearms Opens' },
+  { date: '2025-11-27', label: 'Thanksgiving' },
+  { date: '2025-12-25', label: 'Christmas' }
+];
+
+// Precompute sun data
+const sunData = [];
+for (let i = 0; i < totalDays; i++) {
+  const date = new Date(startDate);
+  date.setDate(date.getDate() + i);
+  try {
+    const times = SunCalc.getTimes(date, config.location.lat, config.location.lon);
+    sunData.push({
+      sunrise: times.sunrise,
+      sunset: times.sunset,
+      daylight: (times.sunset - times.sunrise) / (1000 * 60 * 60)
+    });
+  } catch (e) {
+    // Fallback to estimated times
+    const dayOfYear = Math.floor((date - new Date(date.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+    const sunriseHour = 6.5 + Math.sin((dayOfYear - 80) * Math.PI / 182) * 1.5;
+    const sunsetHour = 18.5 + Math.sin((dayOfYear - 80) * Math.PI / 182) * 1.5;
+    sunData.push({
+      sunrise: new Date(date.setHours(sunriseHour)),
+      sunset: new Date(date.setHours(sunsetHour)),
+      daylight: sunsetHour - sunriseHour
+    });
+  }
+}
+
+// Moon phase calculation
+function getMoonPhase(date) {
+  const lunarMonth = 29.53058867;
+  const knownNew = new Date('2000-01-06 18:14:00');
+  const diff = (date - knownNew) / (1000 * 60 * 60 * 24);
+  const phase = (diff % lunarMonth) / lunarMonth;
+  
+  const phases = [
+    { name: 'New Moon', icon: '🌑', tip: 'Excellent all-day hunting; deer move actively throughout day', intensity: 0 },
+    { name: 'Waxing Crescent', icon: '🌒', tip: 'Good evening hunting; increased late-day movement', intensity: 0.125 },
+    { name: 'First Quarter', icon: '🌓', tip: 'Strong midday activity; hunt 10am-2pm windows', intensity: 0.25 },
+    { name: 'Waxing Gibbous', icon: '🌔', tip: 'Good morning hunting; deer feed heavily before moonrise', intensity: 0.375 },
+    { name: 'Full Moon', icon: '🌕', tip: 'Hunt dawn/dusk heavily; deer feed at night under moonlight', intensity: 0.5 },
+    { name: 'Waning Gibbous', icon: '🌖', tip: 'Excellent dawn hunting; deer very active before sunrise', intensity: 0.625 },
+    { name: 'Last Quarter', icon: '🌗', tip: 'Strong afternoon movement; hunt 2pm until dark', intensity: 0.75 },
+    { name: 'Waning Crescent', icon: '🌘', tip: 'Excellent morning hunting; deer feed heavily at first light', intensity: 0.875 }
+  ];
+  
+  const idx = Math.floor(phase * 8) % 8;
+  return { ...phases[idx], phaseValue: phase };
+}
+
+// Precompute moon phases
+const moonData = [];
+for (let i = 0; i < totalDays; i++) {
+  const date = new Date(startDate);
+  date.setDate(date.getDate() + i);
+  moonData.push(getMoonPhase(date));
+}
+
+// Get rut intensity for a given day
+function getRutIntensity(dayIndex) {
+  const date = new Date(startDate);
+  date.setDate(date.getDate() + dayIndex);
+  
+  for (const period of rutPeriods) {
+    const periodStart = new Date(period.start);
+    const periodEnd = new Date(period.end);
+    if (date >= periodStart && date <= periodEnd) {
+      return period;
+    }
+  }
+  return { intensity: 0, phase: 'Off Season', tip: 'Focus on feeding patterns and travel routes' };
+}
+
+// Canvas setup
+const canvas = document.getElementById('calendar');
+const ctx = canvas.getContext('2d');
+const tooltip = document.getElementById('tooltip');
+
+canvas.width = config.canvas.width;
+canvas.height = config.canvas.height;
+
+// Calculate plotting area
+const plotWidth = canvas.width - config.canvas.margin.left - config.canvas.margin.right;
+const plotHeight = canvas.height - config.canvas.margin.top - config.canvas.margin.bottom;
+const dayWidth = plotWidth / totalDays;
+
+// Helper: date to x position
+function dateToX(date) {
+  const d = new Date(date);
+  const dayOffset = Math.floor((d - startDate) / (1000 * 60 * 60 * 24));
+  return config.canvas.margin.left + (dayOffset * dayWidth);
+}
+
+// Helper: format date
+function formatDate(date) {
+  const d = new Date(date);
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+// Draw functions
+function drawTimeline() {
+  ctx.save();
+  
+  // Top axis line
+  ctx.strokeStyle = config.colors.mdcBrown;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(config.canvas.margin.left, config.canvas.margin.top);
+  ctx.lineTo(canvas.width - config.canvas.margin.right, config.canvas.margin.top);
+  ctx.stroke();
+  
+  // Date ticks and labels - every 7 days with alternating offsets
+  ctx.fillStyle = config.colors.mdcBrown;
+  ctx.textAlign = 'center';
+  
+  for (let i = 0; i < totalDays; i++) {
+    const date = new Date(startDate);
+    date.setDate(date.getDate() + i);
+    const x = config.canvas.margin.left + (i * dayWidth);
+    const isFirstOfMonth = date.getDate() === 1;
+    const isWeekly = i % 7 === 0;
+    
+    // Small tick for every day
+    ctx.strokeStyle = '#ddd';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x, config.canvas.margin.top);
+    ctx.lineTo(x, config.canvas.margin.top + 3);
+    ctx.stroke();
+    
+    // Major tick and label every 7 days or 1st of month
+    if (isWeekly || isFirstOfMonth) {
+      ctx.strokeStyle = isFirstOfMonth ? config.colors.mdcGreen : config.colors.mdcBrown;
+      ctx.lineWidth = isFirstOfMonth ? 2 : 1.5;
+      ctx.beginPath();
+      ctx.moveTo(x, config.canvas.margin.top);
+      ctx.lineTo(x, config.canvas.margin.top + 8);
+      ctx.stroke();
+      
+      // Alternating label heights to prevent overlap
+      const labelOffset = (Math.floor(i / 7) % 2) * 12;
+      ctx.fillStyle = isFirstOfMonth ? config.colors.mdcGreen : config.colors.mdcBrown;
+      ctx.font = isFirstOfMonth ? 'bold 11px Montserrat' : '10px Montserrat';
+      ctx.fillText(formatDate(date), x, config.canvas.margin.top - 8 - labelOffset);
+    }
+  }
+  
+  // Month labels at top
+  ctx.font = 'bold 15px Montserrat';
+  ctx.fillStyle = config.colors.mdcGreen;
+  const months = [
+    { name: 'SEPTEMBER 2025', start: 0, end: 30 },
+    { name: 'OCTOBER', start: 30, end: 61 },
+    { name: 'NOVEMBER', start: 61, end: 91 },
+    { name: 'DECEMBER', start: 91, end: 122 },
+    { name: 'JANUARY 2026', start: 122, end: totalDays }
+  ];
+  
+  months.forEach(month => {
+    const centerDay = (month.start + month.end) / 2;
+    const x = config.canvas.margin.left + (centerDay * dayWidth);
+    ctx.fillText(month.name, x, 20);
+  });
+  
+  ctx.restore();
+}
+
+function drawRows() {
+  const rowHeight = 32;
+  const rowSpacing = 2;
+  let currentY = config.canvas.margin.top + 15;
+  
+  // Row configurations
+  const rows = [
+    { label: 'Archery', type: 'archery', height: rowHeight },
+    { label: 'Firearms', type: 'firearms', height: rowHeight },
+    { label: 'Youth', type: 'youth', height: rowHeight },
+    { label: 'Alternative', type: 'alternative', height: rowHeight },
+    { label: 'Antlerless (CWD)', type: 'antlerless', height: rowHeight },
+    { label: 'Moon Phase', type: 'moon', height: rowHeight },
+    { label: 'Rut Activity', type: 'rut', height: rowHeight },
+    { label: 'Daylight Hours', type: 'daylight', height: rowHeight }
+  ];
+  
+  rows.forEach(row => {
+    // Draw separator
+    ctx.strokeStyle = '#f0f0f0';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(config.canvas.margin.left, currentY - rowSpacing);
+    ctx.lineTo(canvas.width - config.canvas.margin.right, currentY - rowSpacing);
+    ctx.stroke();
+    
+    // Draw label with color square
+    ctx.fillStyle = config.colors.mdcBrown;
+    ctx.font = '12px Montserrat';
+    ctx.textAlign = 'right';
+    ctx.fillText(row.label, config.canvas.margin.left - 30, currentY + row.height / 2 + 4);
+    
+    // Color square
+    const squareSize = 18;
+    let squareColor = config.colors[row.type] || '#ccc';
+    
+    if (row.type === 'moon' || row.type === 'rut' || row.type === 'daylight') {
+      // Gradient for complex rows
+      const gradient = ctx.createLinearGradient(
+        config.canvas.margin.left - 22, 
+        currentY + row.height / 2 - squareSize / 2,
+        config.canvas.margin.left - 22 + squareSize, 
+        currentY + row.height / 2 - squareSize / 2
+      );
+      
+      if (row.type === 'moon') {
+        gradient.addColorStop(0, '#1a1a2e');
+        gradient.addColorStop(0.5, '#f0f0f0');
+        gradient.addColorStop(1, '#1a1a2e');
+      } else if (row.type === 'rut') {
+        gradient.addColorStop(0, '#d32f2f');
+        gradient.addColorStop(0.5, '#f57c00');
+        gradient.addColorStop(1, '#388e3c');
+      } else if (row.type === 'daylight') {
+        gradient.addColorStop(0, '#1976d2');
+        gradient.addColorStop(0.5, '#ffd54f');
+        gradient.addColorStop(1, '#ff6f00');
+      }
+      
+      ctx.fillStyle = gradient;
+    } else {
+      ctx.fillStyle = squareColor;
+    }
+    
+    ctx.fillRect(config.canvas.margin.left - 22, currentY + row.height / 2 - squareSize / 2, squareSize, squareSize);
+    ctx.strokeStyle = 'rgba(0,0,0,0.2)';
+    ctx.strokeRect(config.canvas.margin.left - 22, currentY + row.height / 2 - squareSize / 2, squareSize, squareSize);
+    
+    // Draw row content
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(config.canvas.margin.left, currentY, plotWidth, row.height);
+    ctx.clip();
+    
+    if (row.type === 'moon') {
+      drawMoonRow(currentY, row.height);
+    } else if (row.type === 'daylight') {
+      drawDaylightRow(currentY, row.height);
+    } else if (row.type === 'rut') {
+      drawRutRow(currentY, row.height);
+    } else {
+      drawSeasonRow(row.type, currentY, row.height);
+    }
+    
+    ctx.restore();
+    
+    currentY += row.height + rowSpacing;
+  });
+  
+  // Store row positions for hover detection
+  window.rowPositions = rows.map((row, i) => ({
+    ...row,
+    y: config.canvas.margin.top + 15 + i * (rowHeight + rowSpacing),
+    height: rowHeight
+  }));
+}
+
+function drawSeasonRow(type, y, height) {
+  const matchingSeasons = seasons.filter(s => s.type === type);
+  
+  matchingSeasons.forEach(season => {
+    season.segments.forEach(seg => {
+      const x1 = dateToX(seg.start);
+      const x2 = dateToX(seg.end) + dayWidth;
+      
+      ctx.fillStyle = config.colors[type];
+      ctx.fillRect(x1, y, x2 - x1, height);
+      
+      // Border
+      ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(x1, y, x2 - x1, height);
+      
+      // Label for firearms portions
+      if (seg.label) {
+        ctx.fillStyle = 'white';
+        ctx.font = 'bold 10px Montserrat';
+        ctx.textAlign = 'center';
+        ctx.shadowColor = 'rgba(0,0,0,0.5)';
+        ctx.shadowBlur = 2;
+        ctx.fillText(seg.label, (x1 + x2) / 2, y + height / 2 + 4);
+        ctx.shadowBlur = 0;
+      }
+    });
+  });
+}
+
+function drawMoonRow(y, height) {
+  // Draw every day with phase-appropriate background
+  for (let i = 0; i < totalDays; i++) {
+    const x = config.canvas.margin.left + (i * dayWidth);
+    const phase = moonData[i];
+    
+    // Create gradient based on moon phase (dark = new, light = full)
+    const brightness = Math.abs(phase.phaseValue - 0.5) * 2; // 0 at full, 1 at new
+    const color = Math.floor(brightness * 100) + 155; // Range from 155 to 255
+    
+    ctx.fillStyle = `rgb(${color}, ${color}, ${color})`;
+    ctx.fillRect(x, y, dayWidth, height);
+    
+    // Draw moon icon every 4 days to reduce crowding
+    if (i % 4 === 0) {
+      ctx.font = '16px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText(phase.icon, x + dayWidth / 2, y + height / 2 + 5);
+    }
+    
+    // Add phase name only on major phases (approximately every 7 days)
+    if (['New Moon', 'First Quarter', 'Full Moon', 'Last Quarter'].includes(phase.name)) {
+      ctx.fillStyle = phase.name === 'Full Moon' ? '#1a1a2e' : '#666';
+      ctx.font = 'bold 9px Montserrat';
+      ctx.textAlign = 'center';
+      ctx.fillText(phase.name.split(' ')[0], x + dayWidth / 2, y + height - 4);
+    }
+  }
+}
+
+function drawDaylightRow(y, height) {
+  const minDaylight = Math.min(...sunData.map(d => d.daylight));
+  const maxDaylight = Math.max(...sunData.map(d => d.daylight));
+  const daylightRange = maxDaylight - minDaylight;
+  
+  // Draw gridlines
+  ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([2, 2]);
+  
+  [9, 12, 15].forEach(hours => {
+    const ratio = (hours - minDaylight) / daylightRange;
+    const gridY = y + height - (ratio * height);
+    ctx.beginPath();
+    ctx.moveTo(config.canvas.margin.left, gridY);
+    ctx.lineTo(canvas.width - config.canvas.margin.right, gridY);
+    ctx.stroke();
+    
+    // Hour labels
+    ctx.fillStyle = '#999';
+    ctx.font = '8px Montserrat';
+    ctx.textAlign = 'left';
+    ctx.fillText(`${hours}h`, config.canvas.margin.left + 2, gridY - 2);
+  });
+  
+  ctx.setLineDash([]);
+  
+  // Draw daylight bars with gradient
+  for (let i = 0; i < totalDays; i++) {
+    const x = config.canvas.margin.left + (i * dayWidth);
+    const daylight = sunData[i].daylight;
+    const ratio = (daylight - minDaylight) / daylightRange;
+    const barHeight = ratio * height;
+    
+    // Gradient from dawn blue to noon yellow to dusk orange
+    const gradient = ctx.createLinearGradient(0, y + height, 0, y);
+    gradient.addColorStop(0, '#1976d2');
+    gradient.addColorStop(0.5, '#ffd54f');
+    gradient.addColorStop(1, '#ff6f00');
+    
+    ctx.fillStyle = gradient;
+    ctx.fillRect(x, y + height - barHeight, dayWidth, barHeight);
+    
+    // Show sunrise/sunset times on first day of each month
+    const date = new Date(startDate);
+    date.setDate(date.getDate() + i);
+    if (date.getDate() === 1) {
+      const sun = sunData[i];
+      ctx.fillStyle = '#333';
+      ctx.font = '7px Montserrat';
+      ctx.textAlign = 'center';
+      ctx.fillText(
+        sun.sunrise.toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit'}),
+        x + dayWidth / 2,
+        y + height - barHeight - 2
+      );
+    }
+  }
+}
+
+function drawRutRow(y, height) {
+  for (let i = 0; i < totalDays; i++) {
+    const x = config.canvas.margin.left + (i * dayWidth);
+    const rutInfo = getRutIntensity(i);
+    const intensity = rutInfo.intensity;
+    
+    // Color gradient based on intensity (green = low, yellow = medium, red = high)
+    let color;
+    if (intensity < 0.3) {
+      color = '#388e3c'; // Green
+    } else if (intensity < 0.7) {
+      const t = (intensity - 0.3) / 0.4;
+      const r = Math.floor(56 + (245 - 56) * t);
+      const g = Math.floor(142 + (124 - 142) * t);
+      const b = Math.floor(60);
+      color = `rgb(${r}, ${g}, ${b})`;
+    } else {
+      const t = (intensity - 0.7) / 0.3;
+      const r = Math.floor(245 + (211 - 245) * t);
+      const g = Math.floor(124 - 77 * t);
+      const b = Math.floor(0 + 47 * t);
+      color = `rgb(${r}, ${g}, ${b})`;
+    }
+    
+    ctx.fillStyle = color;
+    const barHeight = intensity * height;
+    ctx.fillRect(x, y + height - barHeight, dayWidth, barHeight);
+    
+    // Add flame icons during peak rut
+    if (intensity >= 0.9 && i % 3 === 0) {
+      ctx.font = '16px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('🔥', x + dayWidth / 2, y + height / 2 + 5);
+    }
+  }
+  
+  // Draw rut phase labels
+  rutPeriods.forEach(period => {
+    const startX = dateToX(period.start);
+    const endX = dateToX(period.end) + dayWidth;
+    const centerX = (startX + endX) / 2;
+    
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 9px Montserrat';
+    ctx.textAlign = 'center';
+    ctx.shadowColor = 'rgba(0,0,0,0.7)';
+    ctx.shadowBlur = 3;
+    ctx.fillText(period.phase, centerX, y + 12);
+    ctx.shadowBlur = 0;
+  });
+}
+
+function drawTodayLine() {
+  if (today >= startDate && today <= endDate) {
+    const x = dateToX(today);
+    
+    // Animated pulse effect
+    const pulseSize = 3 + Math.sin(Date.now() / 500) * 2;
+    
+    ctx.strokeStyle = config.colors.today;
+    ctx.lineWidth = pulseSize;
+    ctx.setLineDash([8, 4]);
+    ctx.beginPath();
+    ctx.moveTo(x, config.canvas.margin.top);
+    ctx.lineTo(x, canvas.height - config.canvas.margin.bottom);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    
+    // Label with background
+    ctx.fillStyle = config.colors.today;
+    ctx.font = 'bold 11px Montserrat';
+    ctx.textAlign = 'center';
+    
+    const labelY = config.canvas.margin.top - 20;
+    const labelWidth = 50;
+    const labelHeight = 16;
+    
+    ctx.fillRect(x - labelWidth/2, labelY - labelHeight/2, labelWidth, labelHeight);
+    ctx.fillStyle = 'white';
+    ctx.fillText('TODAY', x, labelY + 4);
+  }
+}
+
+// Render
+function render() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawTimeline();
+  drawRows();
+  drawTodayLine();
+}
+
+// Interaction
+canvas.addEventListener('mousemove', (e) => {
+  const rect = canvas.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  
+  // Determine day
+  const dayX = x - config.canvas.margin.left;
+  const dayIndex = Math.floor(dayX / dayWidth);
+  
+  if (dayIndex < 0 || dayIndex >= totalDays) {
+    tooltip.classList.remove('visible');
+    return;
+  }
+  
+  // Determine row
+  const row = window.rowPositions?.find(r => y >= r.y && y < r.y + r.height);
+  
+  if (!row) {
+    tooltip.classList.remove('visible');
+    return;
+  }
+  
+  const date = new Date(startDate);
+  date.setDate(date.getDate() + dayIndex);
+  
+  let content = '';
+  
+  if (['archery', 'firearms', 'youth', 'alternative', 'antlerless'].includes(row.type)) {
+    const season = seasons.find(s => {
+      return s.type === row.type && s.segments.some(seg => {
+        const segStart = new Date(seg.start);
+        const segEnd = new Date(seg.end);
+        return date >= segStart && date <= segEnd;
+      });
+    });
+    
+    if (season) {
+      content = `<strong>${season.name}</strong>`;
+      content += `<div class="tooltip-line">📅 ${formatDate(date)}</div>`;
+      content += `<div class="tooltip-line">🎯 ${season.limits}</div>`;
+      content += `<div class="tooltip-line">📝 ${season.notes}</div>`;
+    } else {
+      content = `<strong>${row.label}</strong>`;
+      content += `<div class="tooltip-line">📅 ${formatDate(date)}</div>`;
+      content += `<div class="tooltip-line">❌ Not in season</div>`;
+    }
+  } else if (row.type === 'moon') {
+    const phase = moonData[dayIndex];
+    content = `<strong>${phase.icon} ${phase.name}</strong>`;
+    content += `<div class="tooltip-line">📅 ${formatDate(date)}</div>`;
+    content += `<div class="tooltip-line">🎯 ${phase.tip}</div>`;
+  } else if (row.type === 'daylight') {
+    const sun = sunData[dayIndex];
+    content = `<strong>Daylight Hours</strong>`;
+    content += `<div class="tooltip-line">📅 ${formatDate(date)}</div>`;
+    content += `<div class="tooltip-line">🌅 Sunrise: ${sun.sunrise.toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit'})}</div>`;
+    content += `<div class="tooltip-line">🌇 Sunset: ${sun.sunset.toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit'})}</div>`;
+    content += `<div class="tooltip-line">⏱️ Total: ${sun.daylight.toFixed(1)} hours</div>`;
+    content += `<div class="tooltip-line">💡 Best hunting: First/last hour of light</div>`;
+  } else if (row.type === 'rut') {
+    const rutInfo = getRutIntensity(dayIndex);
+    const intensityPercent = Math.round(rutInfo.intensity * 100);
+    content = `<strong>🦌 ${rutInfo.phase}</strong>`;
+    content += `<div class="tooltip-line">📅 ${formatDate(date)}</div>`;
+    content += `<div class="tooltip-line">📊 Activity Level: ${intensityPercent}%</div>`;
+    content += `<div class="tooltip-line">🎯 ${rutInfo.tip}</div>`;
+  }
+  
+  if (content) {
+    tooltip.innerHTML = content;
+    
+    // Position tooltip to stay in viewport
+    let tooltipX = e.clientX + 15;
+    let tooltipY = e.clientY + 15;
+    
+    const tooltipRect = tooltip.getBoundingClientRect();
+    if (tooltipX + tooltipRect.width > window.innerWidth - 20) {
+      tooltipX = e.clientX - tooltipRect.width - 15;
+    }
+    if (tooltipY + tooltipRect.height > window.innerHeight - 20) {
+      tooltipY = e.clientY - tooltipRect.height - 15;
+    }
+    
+    tooltip.style.left = tooltipX + 'px';
+    tooltip.style.top = tooltipY + 'px';
+    tooltip.classList.add('visible');
+  } else {
+    tooltip.classList.remove('visible');
+  }
+});
+
+canvas.addEventListener('mouseleave', () => {
+  tooltip.classList.remove('visible');
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'l' || e.key === 'L') {
+    toggleLegend();
+  }
+});
+
+// Control functions
+function downloadCalendar() {
+  const link = document.createElement('a');
+  link.download = 'mdc-deer-calendar-2025-2026.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
+function toggleLegend() {
+  const legend = document.getElementById('legend');
+  legend.style.display = legend.style.display === 'none' ? 'block' : 'none';
+}
+
+// Animation loop for pulsing today line
+function animate() {
+  render();
+  requestAnimationFrame(animate);
+}
+
+// Initialize
+animate();
+
+// Print styles
+const style = document.createElement('style');
+style.textContent = `
+  @media print {
+    body { background: white; padding: 0; }
+    .controls { display: none; }
+    .container { box-shadow: none; }
+  }
+`;
+document.head.appendChild(style);
+</script>
+
+</body>
+</html>
