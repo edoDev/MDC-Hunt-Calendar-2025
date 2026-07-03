@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MDC Hunt Calendar 2026–27 — Pevely, MO (Jefferson County)</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#232A20">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
   :root{
@@ -11,7 +15,7 @@
     --line:#C9CEC0;
     --archery:#5A7048; --firearms:#FF5A00; --antlerless:#B98A00;
     --youth:#3E7CB1; --alt:#6E5A8E; --bear:#6B4226;
-    --alert:#FF5A00; --verify:#B98A00; --model:#8A94A6;
+    --alert:#FF5A00; --verify:#B98A00; --model:#8A94A6; --personal:#2E7D74;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   body{background:var(--paper); color:var(--ink);
@@ -87,12 +91,41 @@
   footer .vbadge{color:var(--verify); font-weight:700;}
   footer a{color:var(--ink);}
 
+  /* ---------- scouting (personal data) ---------- */
+  #scout{display:none; padding:14px 24px; border-bottom:1px solid var(--line);
+    background:#EEF3F1; max-width:1200px; margin:0 auto;}
+  #scout.show{display:block;}
+  #scout h3{font-size:19px; margin-bottom:6px;}
+  #scout .note{font-size:12px; color:var(--ink-soft); margin-bottom:8px;}
+  #scout table{width:100%; border-collapse:collapse; font-size:13px; margin-bottom:10px;}
+  #scout th,#scout td{border-bottom:1px solid var(--line); text-align:left;
+    padding:4px 6px;}
+  .sform{display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin:6px 0;}
+  .sform input,.sform select,.sform textarea{font:inherit; font-size:13px;
+    padding:4px 6px; border:1px solid var(--ink-soft); border-radius:2px;}
+  .sform input[type=text]{min-width:120px;}
+  .xbtn{border:none; background:none; color:#B4231F; cursor:pointer; font-weight:700;}
+  .day .pmark{position:absolute; bottom:3px; left:5px; font-size:10px;
+    color:var(--personal); font-weight:700; letter-spacing:1px;}
+  .day .swin{position:absolute; top:3px; left:24px; width:8px; height:8px;
+    border:1.5px solid var(--personal); border-radius:50%; opacity:.6;}
+  .entry{border-left:3px solid var(--personal); padding:2px 8px; margin:3px 0;
+    font-size:13px;}
+  .entry.plan{border-left-style:dashed;}
+  .entry .done{color:var(--personal); font-weight:700;}
+  #report{display:none; padding:14px 24px; max-width:1200px; margin:0 auto;
+    border-top:3px solid var(--personal); background:#fff;}
+  #report.show{display:block;}
+  #report h3{font-size:22px;} #report h4{margin:10px 0 4px; font-size:16px;}
+  #report p,#report li{font-size:13.5px; margin:2px 0;}
+
   @media (max-width:640px){
     .day{min-height:60px;} header h1{font-size:26px;}
     main,header,.controls,footer{padding-left:12px; padding-right:12px;}
   }
   @media print{
-    .controls,#detail,button{display:none !important;}
+    .controls,#detail,button,#scout{display:none !important;}
+    #report.show{display:block !important;}
     body{background:#fff;} .day{break-inside:avoid;}
   }
   @media (prefers-reduced-motion:no-preference){
@@ -119,11 +152,95 @@
       <option value="holder">2026 BMZ 2 permit holder</option>
     </select>
   </label>
+  <button id="btnHelp">Help</button>
+  <button id="btnScout">Scouting</button>
+  <button id="btnReport">Scouting report</button>
   <button id="btnPng">Download PNG</button>
   <button onclick="window.print()">Print</button>
+  <span id="netBadge" style="display:none; font-size:12px; font-weight:700;
+    color:var(--verify); border:1.5px solid var(--verify); border-radius:2px;
+    padding:2px 6px;">OFFLINE — cached data, verified 2026-07-02</span>
   <span style="font-size:12px;color:var(--ink-soft)">Press L to toggle legend ·
-    Click a day for detail</span>
+    ? for help · Click a day for detail</span>
 </div>
+
+<section id="scout" aria-label="Scouting locations and data">
+  <h3 class="disp">Scouting — Locations &amp; Data</h3>
+  <div class="note">Personal data (LOG). Stored only in this browser on this
+    device — use Export for backup or to move devices.</div>
+  <div class="sform">
+    <input type="text" id="locName" placeholder="Location name" aria-label="Location name">
+    <select id="locType" aria-label="Location type">
+      <option>Stand</option><option>Camera</option><option>Access point</option>
+      <option>Sign area</option><option>Glassing point</option>
+    </select>
+    <input type="text" id="locCoords" placeholder="lat,lon (optional)"
+      aria-label="Coordinates">
+    <button id="btnAddLoc">Add location</button>
+    <span style="flex:1"></span>
+    <button id="btnExport">Export JSON</button>
+    <button id="btnImport">Import JSON</button>
+    <input type="file" id="importFile" accept=".json" style="display:none">
+  </div>
+  <table id="locTable" aria-label="Location registry"></table>
+  <div class="note">To plan a session or log an observation, click a calendar
+    day and use the form in the day detail. ○ = planned session,
+    <strong>●</strong> = logged observation on a day cell. Hollow circles at
+    the top of a cell mark suggested scouting windows (MODEL — general
+    practice, not MDC guidance).</div>
+</section>
+
+<section id="report" aria-label="Scouting report"></section>
+
+<dialog id="help" aria-label="Help" style="max-width:560px; border:2px solid
+  var(--ink); border-radius:4px; padding:18px 20px; background:var(--panel);
+  color:var(--ink); font-size:14px; line-height:1.55;">
+  <h3 class="disp" style="font-size:22px; margin-bottom:8px;">How to use this calendar</h3>
+
+  <h4 class="disp" style="margin:10px 0 2px;">Use it offline (in the field)</h4>
+  <p>After one visit with a connection, the whole app — seasons, scouting log,
+  sun and moon data — works with <strong>no cell signal</strong>.</p>
+  <p><strong>Install to your phone:</strong> Android/Chrome: menu (⋮) →
+  <em>Add to Home screen</em> or <em>Install app</em>. iPhone/Safari: Share
+  (□↑) → <em>Add to Home Screen</em>. It then opens full-screen like an app.</p>
+  <p>When you're offline, an <strong>OFFLINE</strong> badge appears in the
+  toolbar with the date the season data was last verified — regulations can
+  change, so re-open online now and then to pick up updates.</p>
+
+  <h4 class="disp" style="margin:10px 0 2px;">Reading the calendar</h4>
+  <p>Colored bars on a day = seasons open that day. <strong>Hatched bars</strong>
+  mean the dates are confirmed but Jefferson County's open-county status is
+  pending MDC's 2026 Fall booklet — verify before hunting. Click any day for
+  sunrise/sunset, legal shooting light, moon, and rules. Toggle layers in the
+  legend, or press <strong>L</strong> to hide it. <strong>Esc</strong> closes
+  panels.</p>
+  <p>Tags: <strong>REG</strong> = set by MDC (sourced in the footer).
+  <strong>MODEL</strong> = computed here (sun, moon, rut estimate) — not
+  regulatory. <strong>LOG</strong> = your own data.</p>
+
+  <h4 class="disp" style="margin:10px 0 2px;">Bear permit status</h4>
+  <p>Pick your status in the toolbar. Permit holders get a
+  <strong>CALL QUOTA LINE</strong> chip on bear-season days — MDC requires
+  calling 800-668-4045 before hunting each day. Everyone sees the season,
+  zone rules, and the May 2027 application window.</p>
+
+  <h4 class="disp" style="margin:10px 0 2px;">Scouting</h4>
+  <p><strong>Scouting</strong> opens your location registry (stands, cameras,
+  access points). Click a calendar day to plan a session (○) or log an
+  observation (●). Dotted circles mark suggested scouting windows — general
+  practice, not MDC guidance. <strong>Scouting report</strong> builds a
+  printable per-species summary with gaps and your next openers.</p>
+
+  <h4 class="disp" style="margin:10px 0 2px;">Your data lives on this device</h4>
+  <p>Scouting data is stored only in this browser. It does not sync.
+  <strong>Export JSON regularly</strong> — phones can clear browser storage
+  under pressure — and use Import to restore or move devices.</p>
+
+  <p style="margin-top:10px; font-size:12.5px; color:var(--ink-soft);">
+  Not a legal document. Always verify at mdc.mo.gov before hunting.</p>
+  <button onclick="document.getElementById('help').close()"
+    style="margin-top:8px;">Close</button>
+</dialog>
 
 <div id="legend"></div>
 <main id="cal"></main>
@@ -293,6 +410,31 @@ permitSel.value = localStorage.getItem("mdc_permit_status") || "info";
 permitSel.addEventListener("change", () => {
   localStorage.setItem("mdc_permit_status", permitSel.value); render(); });
 
+/* ---------- scouting store (personal data — LOG) ---------- */
+const SKEY = "mdc_scout_v1";
+function loadScout(){
+  try{ const s = JSON.parse(localStorage.getItem(SKEY));
+    if (s && Array.isArray(s.locations) && Array.isArray(s.entries)) return s;
+  }catch(e){}
+  return {version:1, locations:[], entries:[]};
+}
+let SCOUT = loadScout();
+function saveScout(){ localStorage.setItem(SKEY, JSON.stringify(SCOUT)); }
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+const locName = id => (SCOUT.locations.find(l => l.id === id) || {}).name || "(unassigned)";
+const entriesOn = iso => SCOUT.entries.filter(e => e.date === iso);
+
+/* suggested scouting windows — MODEL class, general practice not MDC guidance */
+const SCOUT_WINDOWS = [
+  {start:"2026-09-01", end:"2026-09-14",
+   label:"Pre-archery glassing & camera set (before Sep 15 opener)"},
+  {start:"2026-10-10", end:"2026-10-16",
+   label:"Bear sign check, BMZ 2 (week before Oct 17 opener)"},
+  {start:"2026-11-07", end:"2026-11-13",
+   label:"Pre-firearms stand audit (before Nov 14 opener)"}
+];
+const winOn = iso => SCOUT_WINDOWS.filter(w => iso >= w.start && iso <= w.end);
+
 /* ---------- render ---------- */
 function render(){
   renderLegend(); renderCalendar(); renderSources();
@@ -315,9 +457,43 @@ function renderLegend(){
   rut.className = "lg";
   rut.innerHTML = `<span style="color:#B4231F">\u25B2</span> Rut peak (est.)
     <span class="cls">MODEL</span> &nbsp;
-    \u{1F315}/\u{1F311} Full & new moon <span class="cls">MODEL</span>`;
+    \u{1F315}/\u{1F311} Full & new moon <span class="cls">MODEL</span> &nbsp;
+    <span style="color:var(--personal)">\u25CB plan / \u25CF observation</span>
+    <span class="cls" style="background:var(--personal)">LOG</span> &nbsp;
+    <span style="color:var(--personal)">\u25CC scouting window</span>
+    <span class="cls">MODEL</span>`;
   el.appendChild(rut);
+  renderScoutPanel();
 }
+
+function renderScoutPanel(){
+  const t = document.getElementById("locTable");
+  if (!SCOUT.locations.length){
+    t.innerHTML = `<tr><td style="color:var(--ink-soft)">No locations yet —
+      add stands, cameras, and access points above.</td></tr>`;
+    return;
+  }
+  t.innerHTML = `<tr><th>Name</th><th>Type</th><th>Coords</th>
+    <th>Entries</th><th></th></tr>` +
+    SCOUT.locations.map(l => {
+      const n = SCOUT.entries.filter(e => e.loc === l.id).length;
+      return `<tr><td>${esc(l.name)}</td><td>${esc(l.type)}</td>
+        <td>${esc(l.coords || "—")}</td><td>${n}</td>
+        <td><button class="xbtn" data-del-loc="${l.id}"
+          aria-label="Delete ${esc(l.name)}">\u2715</button></td></tr>`;
+    }).join("");
+  t.querySelectorAll("[data-del-loc]").forEach(b =>
+    b.onclick = () => {
+      const id = b.getAttribute("data-del-loc");
+      if (!confirm("Delete this location? Entries keep their notes but lose the link."))
+        return;
+      SCOUT.locations = SCOUT.locations.filter(l => l.id !== id);
+      SCOUT.entries.forEach(e => { if (e.loc === id) e.loc = null; });
+      saveScout(); render();
+    });
+}
+function esc(s){ return String(s).replace(/[&<>"']/g,
+  c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 
 function renderCalendar(){
   const cal = document.getElementById("cal"); cal.innerHTML = "";
@@ -352,6 +528,17 @@ function renderCalendar(){
       if (iso >= rut.peak_start && iso <= rut.peak_end)
         cell.insertAdjacentHTML("beforeend",
           `<span class="rut" title="Rut peak estimate (model)">\u25B2</span>`);
+      const ents = entriesOn(iso);
+      if (ents.length){
+        const marks = ents.map(e => e.kind === "plan"
+          ? (e.done ? "\u25CF" : "\u25CB") : "\u25CF").slice(0,4).join("");
+        cell.insertAdjacentHTML("beforeend",
+          `<span class="pmark" title="${ents.length} scouting entr${
+            ents.length>1?"ies":"y"} (personal log)">${marks}</span>`);
+      }
+      if (winOn(iso).length)
+        cell.insertAdjacentHTML("beforeend",
+          `<span class="swin" title="Suggested scouting window (model)"></span>`);
       const bars = document.createElement("div"); bars.className = "bars";
       const open = openSeasons(iso);
       open.forEach(s => {
@@ -402,8 +589,58 @@ function showDetail(iso, date){
   if (iso >= rut.peak_start && iso <= rut.peak_end)
     html += `Rut peak window — ${rut.note}`;
   html += `</div>`;
+  winOn(iso).forEach(w => {
+    html += `<div class="row meta" style="color:var(--personal)">
+      \u25CC ${w.label} <span class="cls" style="background:var(--model);
+      color:#fff;padding:0 4px;border-radius:2px;font-size:10px">MODEL</span></div>`;
+  });
+  const ents = entriesOn(iso);
+  if (ents.length){
+    html += `<div class="row"><strong>Scouting log:</strong></div>`;
+    ents.forEach(e => {
+      html += `<div class="entry ${e.kind}">
+        ${e.kind === "plan" ? (e.done ? '<span class="done">\u2713 done</span> '
+          : "\u25CB planned ") : "\u25CF observed "}
+        · ${esc(e.species)} · ${esc(locName(e.loc))}
+        ${e.notes ? " — " + esc(e.notes) : ""}
+        ${e.kind === "plan" && !e.done
+          ? `<button class="xbtn" style="color:var(--personal)"
+             data-done="${e.id}" title="Mark done">\u2713</button>` : ""}
+        <button class="xbtn" data-del-ent="${e.id}"
+          title="Delete entry">\u2715</button></div>`;
+    });
+  }
+  const locOpts = SCOUT.locations.map(l =>
+    `<option value="${l.id}">${esc(l.name)}</option>`).join("");
+  html += `<div class="sform">
+    <select id="eKind" aria-label="Entry kind">
+      <option value="plan">Plan session</option>
+      <option value="obs">Log observation</option></select>
+    <select id="eSpecies" aria-label="Species">
+      <option>Deer</option><option>Bear</option><option>Both</option></select>
+    <select id="eLoc" aria-label="Location">
+      <option value="">(no location)</option>${locOpts}</select>
+    <input type="text" id="eNotes" placeholder="Notes (sign, wind, cam pull…)"
+      aria-label="Notes" style="flex:1;min-width:140px">
+    <button id="eAdd">Add to ${iso}</button></div>`;
   document.getElementById("detailBody").innerHTML = html;
   document.getElementById("detail").classList.add("show");
+  document.getElementById("eAdd").onclick = () => {
+    SCOUT.entries.push({id:uid(), date:iso,
+      kind:document.getElementById("eKind").value,
+      species:document.getElementById("eSpecies").value,
+      loc:document.getElementById("eLoc").value || null,
+      notes:document.getElementById("eNotes").value.trim(), done:false});
+    saveScout(); render(); showDetail(iso, date);
+  };
+  document.querySelectorAll("#detail [data-del-ent]").forEach(b =>
+    b.onclick = () => { SCOUT.entries = SCOUT.entries.filter(
+      e => e.id !== b.getAttribute("data-del-ent"));
+      saveScout(); render(); showDetail(iso, date); });
+  document.querySelectorAll("#detail [data-done]").forEach(b =>
+    b.onclick = () => { const e = SCOUT.entries.find(
+      x => x.id === b.getAttribute("data-done"));
+      if (e) e.done = true; saveScout(); render(); showDetail(iso, date); });
 }
 function hideDetail(){
   document.getElementById("detail").classList.remove("show"); }
@@ -436,6 +673,9 @@ document.addEventListener("keydown", e => {
     const lg = document.getElementById("legend");
     lg.style.display = lg.style.display === "none" ? "" : "none";
   }
+  if (e.key === "?" &&
+      !/select|input|textarea/i.test(document.activeElement.tagName))
+    document.getElementById("help").showModal();
   if (e.key === "Escape") hideDetail();
 });
 document.getElementById("btnPng").addEventListener("click", () => {
@@ -445,6 +685,115 @@ document.getElementById("btnPng").addEventListener("click", () => {
     a.href = cv.toDataURL("image/png"); a.click();
   });
 });
+
+/* ---------- PWA: offline + install (Epic G) ---------- */
+if ("serviceWorker" in navigator)
+  navigator.serviceWorker.register("sw.js").catch(() => {});
+if (navigator.storage && navigator.storage.persist)
+  navigator.storage.persist();      /* ask browser not to evict scouting data */
+function netBadge(){
+  document.getElementById("netBadge").style.display =
+    navigator.onLine ? "none" : "inline-block";
+}
+addEventListener("online", netBadge);
+addEventListener("offline", netBadge);
+netBadge();
+
+/* ---------- help ---------- */
+document.getElementById("btnHelp").onclick = () =>
+  document.getElementById("help").showModal();
+
+/* ---------- scouting UI wiring ---------- */
+document.getElementById("btnScout").onclick = () =>
+  document.getElementById("scout").classList.toggle("show");
+document.getElementById("btnAddLoc").onclick = () => {
+  const name = document.getElementById("locName").value.trim();
+  if (!name) return alert("Give the location a name.");
+  const coords = document.getElementById("locCoords").value.trim();
+  if (coords && !/^-?\d{1,2}(\.\d+)?\s*,\s*-?\d{1,3}(\.\d+)?$/.test(coords))
+    return alert("Coordinates should look like 38.2834,-90.3951 (or leave blank).");
+  SCOUT.locations.push({id:uid(), name,
+    type:document.getElementById("locType").value, coords});
+  document.getElementById("locName").value = "";
+  document.getElementById("locCoords").value = "";
+  saveScout(); render();
+};
+document.getElementById("btnExport").onclick = () => {
+  const blob = new Blob([JSON.stringify(
+    {exported:new Date().toISOString(), app:"MDC-Hunt-Calendar",
+     scout:SCOUT, permit_status:permitSel.value}, null, 2)],
+    {type:"application/json"});
+  const a = document.createElement("a");
+  a.download = "mdc-scouting-backup.json";
+  a.href = URL.createObjectURL(blob); a.click();
+  URL.revokeObjectURL(a.href);
+};
+document.getElementById("btnImport").onclick = () =>
+  document.getElementById("importFile").click();
+document.getElementById("importFile").addEventListener("change", e => {
+  const f = e.target.files[0]; if (!f) return;
+  f.text().then(txt => {
+    try{
+      const j = JSON.parse(txt);
+      const s = j.scout || j;
+      if (!Array.isArray(s.locations) || !Array.isArray(s.entries))
+        throw new Error("shape");
+      if (!confirm(`Import ${s.locations.length} locations and ${
+        s.entries.length} entries? This replaces current scouting data.`)) return;
+      SCOUT = {version:1, locations:s.locations, entries:s.entries};
+      saveScout(); render();
+    }catch(err){ alert("That file isn't a valid scouting backup."); }
+    e.target.value = "";
+  });
+});
+
+/* ---------- scouting report (Epic D) ---------- */
+document.getElementById("btnReport").onclick = () => {
+  const R = document.getElementById("report");
+  if (R.classList.contains("show")){ R.classList.remove("show"); return; }
+  const today = d2s(new Date(Date.now() - new Date().getTimezoneOffset()*6e4));
+  const bySpecies = sp => SCOUT.entries.filter(e =>
+    e.species === sp || e.species === "Both");
+  let html = `<h3 class="disp">Scouting Report — ${today}</h3>
+    <p style="color:var(--ink-soft)">Personal log (LOG). Season dates are
+    MDC-sourced; suggestions are model-class. Print or export for records.</p>`;
+  ["Deer","Bear"].forEach(sp => {
+    const es = bySpecies(sp);
+    const plans = es.filter(e => e.kind === "plan");
+    const obs = es.filter(e => e.kind === "obs");
+    html += `<h4 class="disp">${sp}</h4>
+      <p>${plans.filter(p => p.done).length}/${plans.length} planned sessions
+      completed · ${obs.length} observations logged.</p>`;
+    if (es.length){
+      html += "<ul>" + es.sort((a,b) => a.date < b.date ? -1 : 1).map(e =>
+        `<li>${e.date} — ${e.kind === "plan"
+          ? (e.done ? "\u2713 session" : "\u25CB planned") : "\u25CF observed"}
+          · ${esc(locName(e.loc))}${e.notes ? " — " + esc(e.notes) : ""}</li>`
+      ).join("") + "</ul>";
+    } else html += `<p style="color:var(--ink-soft)">No entries yet.</p>`;
+  });
+  html += `<h4 class="disp">Locations</h4>`;
+  html += SCOUT.locations.length
+    ? "<ul>" + SCOUT.locations.map(l => {
+        const n = SCOUT.entries.filter(e => e.loc === l.id).length;
+        return `<li>${esc(l.name)} (${esc(l.type)}${
+          l.coords ? ", " + esc(l.coords) : ""}) — ${n} entr${n===1?"y":"ies"}${
+          n === 0 ? " · <em>gap: not yet scouted</em>" : ""}</li>`;
+      }).join("") + "</ul>"
+    : `<p style="color:var(--ink-soft)">No locations registered.</p>`;
+  const nextOpeners = DATA.seasons.flatMap(s => s.ranges.map(r =>
+      ({name:s.name, start:r.start})))
+    .filter(o => o.start >= today).sort((a,b) => a.start < b.start ? -1 : 1)
+    .slice(0,3);
+  if (nextOpeners.length){
+    html += `<h4 class="disp">Next openers</h4><ul>` + nextOpeners.map(o =>
+      `<li>${o.start} — ${o.name}</li>`).join("") + "</ul>";
+  }
+  R.innerHTML = html + `<button onclick="window.print()">Print report</button>
+    <button onclick="document.getElementById('report').classList.remove('show')">
+    Close</button>`;
+  R.classList.add("show"); R.scrollIntoView({behavior:"smooth"});
+};
 </script>
 </body>
 </html>

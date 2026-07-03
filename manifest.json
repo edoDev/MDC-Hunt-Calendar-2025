@@ -1,0 +1,14 @@
+{
+  "name": "MDC Hunt Calendar 2026-27 — Pevely, MO",
+  "short_name": "Hunt Cal 26-27",
+  "description": "Season calendar, scouting planner, and log for Jefferson County, MO. Works offline.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#EBEDE6",
+  "theme_color": "#232A20",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
