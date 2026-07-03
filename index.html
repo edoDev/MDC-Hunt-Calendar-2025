@@ -12,10 +12,21 @@
 <style>
   :root{
     --paper:#EBEDE6; --panel:#F5F6F1; --ink:#232A20; --ink-soft:#5B6355;
-    --line:#C9CEC0;
+    --line:#C9CEC0; --cell:#ffffff; --scoutbg:#EEF3F1;
     --archery:#5A7048; --firearms:#FF5A00; --antlerless:#B98A00;
     --youth:#3E7CB1; --alt:#6E5A8E; --bear:#6B4226;
     --alert:#FF5A00; --verify:#B98A00; --model:#8A94A6; --personal:#2E7D74;
+  }
+  :root[data-theme="dark"]{
+    --paper:#161A14; --panel:#1E2419; --ink:#E4E7DC; --ink-soft:#9AA391;
+    --line:#3A4136; --cell:#232A20; --scoutbg:#1C2622;
+    --archery:#6E8A59; --antlerless:#CFA83A; --bear:#8A5B38;
+  }
+  :root[data-theme="dark"] .huntable{color:#7CC58A;}
+  :root[data-theme="dark"] .nowind{color:#E07672;}
+  @media print{
+    :root{--paper:#fff; --panel:#fff; --cell:#fff; --scoutbg:#fff;
+      --ink:#232A20; --ink-soft:#5B6355; --line:#C9CEC0;}
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   body{background:var(--paper); color:var(--ink);
@@ -34,8 +45,8 @@
     padding:12px 24px; border-bottom:1px solid var(--line); background:var(--panel);}
   .controls label{font-size:13px; color:var(--ink-soft);}
   select,button{font:inherit; padding:5px 10px; border:1.5px solid var(--ink);
-    background:#fff; color:var(--ink); border-radius:2px; cursor:pointer;}
-  button:hover{background:var(--ink); color:#fff;}
+    background:var(--cell); color:var(--ink); border-radius:2px; cursor:pointer;}
+  button:hover{background:var(--ink); color:var(--paper);}
   button:focus-visible,select:focus-visible,.lg:focus-visible,.day:focus-visible{
     outline:3px solid var(--youth); outline-offset:2px;}
 
@@ -46,7 +57,7 @@
   .lg .sw{width:22px; height:10px; border-radius:2px; display:inline-block;}
   .lg.off{opacity:.35; text-decoration:line-through;}
   .lg .cls{font-size:10px; padding:0 4px; border-radius:2px; color:#fff; background:var(--model);}
-  .lg .cls.reg{background:var(--ink);}
+  .lg .cls.reg{background:var(--ink); color:var(--paper);}
 
   main{padding:18px 24px 30px; max-width:1200px; margin:0 auto;}
   .month{margin-bottom:26px;}
@@ -55,7 +66,7 @@
   .grid{display:grid; grid-template-columns:repeat(7,1fr); gap:4px;}
   .dow{font-size:11px; text-transform:uppercase; letter-spacing:.06em;
     color:var(--ink-soft); text-align:center; padding:2px 0;}
-  .day{min-height:78px; background:#fff; border:1px solid var(--line);
+  .day{min-height:78px; background:var(--cell); border:1px solid var(--line);
     border-radius:3px; padding:4px 5px; position:relative; cursor:pointer;
     display:flex; flex-direction:column; gap:2px;}
   .day.blank{background:transparent; border:none; cursor:default;}
@@ -93,7 +104,7 @@
 
   /* ---------- scouting (personal data) ---------- */
   #scout{display:none; padding:14px 24px; border-bottom:1px solid var(--line);
-    background:#EEF3F1; max-width:1200px; margin:0 auto;}
+    background:var(--scoutbg); max-width:1200px; margin:0 auto;}
   #scout.show{display:block;}
   #scout h3{font-size:19px; margin-bottom:6px;}
   #scout .note{font-size:12px; color:var(--ink-soft); margin-bottom:8px;}
@@ -102,7 +113,8 @@
     padding:4px 6px;}
   .sform{display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin:6px 0;}
   .sform input,.sform select,.sform textarea{font:inherit; font-size:13px;
-    padding:4px 6px; border:1px solid var(--ink-soft); border-radius:2px;}
+    padding:4px 6px; border:1px solid var(--ink-soft); border-radius:2px;
+    background:var(--cell); color:var(--ink);}
   .sform input[type=text]{min-width:120px;}
   .xbtn{border:none; background:none; color:#B4231F; cursor:pointer; font-weight:700;}
   .day .pmark{position:absolute; bottom:3px; left:5px; font-size:10px;
@@ -114,7 +126,7 @@
   .entry.plan{border-left-style:dashed;}
   .entry .done{color:var(--personal); font-weight:700;}
   #report{display:none; padding:14px 24px; max-width:1200px; margin:0 auto;
-    border-top:3px solid var(--personal); background:#fff;}
+    border-top:3px solid var(--personal); background:var(--panel);}
   #report.show{display:block;}
   #report h3{font-size:22px;} #report h4{margin:10px 0 4px; font-size:16px;}
   #report p,#report li{font-size:13.5px; margin:2px 0;}
@@ -124,13 +136,32 @@
   .ev.weak{background:#8A94A6;}
   .chipwrap{display:inline-flex; flex-wrap:wrap; gap:3px;}
   .chipwrap label{font-size:11.5px; border:1px solid var(--ink-soft);
-    border-radius:2px; padding:1px 5px; cursor:pointer; background:#fff;}
+    border-radius:2px; padding:1px 5px; cursor:pointer; background:var(--cell);}
   .chipwrap input{display:none;}
   .chipwrap input:checked + span{font-weight:700; color:#fff;}
   .chipwrap label:has(input:checked){background:var(--personal);
     border-color:var(--personal);}
   .huntable{color:#2E6B34; font-weight:700;}
   .nowind{color:#B4231F; font-weight:700;}
+
+  /* ---------- agenda views (G3: phone-first) ---------- */
+  .agrow{display:flex; gap:10px; align-items:flex-start; background:var(--cell);
+    border:1px solid var(--line); border-radius:3px; padding:10px 12px;
+    margin-bottom:6px; cursor:pointer; min-height:44px;}
+  .agrow.today{border:2px solid var(--ink);}
+  .agrow .agdate{min-width:86px; font-weight:700; line-height:1.2;}
+  .agrow .agdate .dw{display:block; font-size:11px; text-transform:uppercase;
+    letter-spacing:.06em; color:var(--ink-soft); font-weight:600;}
+  .agrow .agbody{flex:1; display:flex; flex-wrap:wrap; gap:4px 6px;
+    align-items:center; font-size:12.5px;}
+  .agchip{padding:2px 7px; border-radius:2px; color:#fff; font-size:12px;
+    font-weight:600;}
+  .agchip.verify{background-image:repeating-linear-gradient(45deg,
+    rgba(255,255,255,.35) 0 4px, transparent 4px 8px);}
+  .agmeta{color:var(--ink-soft); width:100%;}
+  @media (max-width:640px){
+    .agrow .agdate{min-width:64px; font-size:14px;}
+  }
 
   @media (max-width:640px){
     .day{min-height:60px;} header h1{font-size:26px;}
@@ -139,7 +170,7 @@
   @media print{
     .controls,#detail,button,#scout{display:none !important;}
     #report.show{display:block !important;}
-    body{background:#fff;} .day{break-inside:avoid;}
+    body{background:#fff; color:#232A20;} .day{break-inside:avoid;}
   }
   @media (prefers-reduced-motion:no-preference){
     #detail.show{animation:up .15s ease-out;}
@@ -165,12 +196,21 @@
       <option value="holder">2026 BMZ 2 permit holder</option>
     </select>
   </label>
+  <label>View:
+    <select id="viewSel" aria-label="Calendar view">
+      <option value="month">Month</option>
+      <option value="week">Next 7 days</option>
+      <option value="fortnight">Next 14 days</option>
+    </select>
+  </label>
   <button id="btnHelp">Help</button>
   <button id="btnCraft">Field craft</button>
   <button id="btnScout">Scouting</button>
   <button id="btnReport">Scouting report</button>
+  <button id="btnIcal">iCal</button>
   <button id="btnPng">Download PNG</button>
   <button onclick="window.print()">Print</button>
+  <button id="btnTheme" title="Toggle dark theme" aria-label="Toggle dark theme">&#x263D;</button>
   <span id="netBadge" style="display:none; font-size:12px; font-weight:700;
     color:var(--verify); border:1.5px solid var(--verify); border-radius:2px;
     padding:2px 6px;">OFFLINE — cached data, verified 2026-07-02</span>
@@ -213,8 +253,32 @@
     day and use the form in the day detail. ○ = planned session,
     <strong>●</strong> = logged observation on a day cell. Hollow circles at
     the top of a cell mark suggested scouting windows (MODEL — general
-    practice, not MDC guidance).</div>
+    practice, not MDC guidance). ▤ = trip note exists for that day.</div>
+  <h3 class="disp" style="margin-top:12px;">Trip Notes</h3>
+  <div class="note">Structured field notes per scouting trip — overview, sites
+    with GPS, habitat, sign, cameras, wind, priority ranking. Included in
+    Export and the Scouting report.</div>
+  <div class="sform"><button id="btnNewTrip">New trip note</button></div>
+  <div id="tripList"></div>
 </section>
+
+<dialog id="trip" aria-label="Trip note" style="width:min(720px, 94vw);
+  max-height:90vh; border:2px solid var(--ink); border-radius:4px;
+  padding:16px 18px; background:var(--panel); color:var(--ink);
+  font-size:14px;">
+  <h3 class="disp" style="font-size:21px;">Trip Note</h3>
+  <p class="note" style="font-size:12px; color:var(--ink-soft); margin:4px 0 8px;">
+    Be specific and dated — vague notes lose value fast. Note <em>current</em>
+    conditions (exact acorn drop, fresh sign), link photos immediately, and
+    re-rank sites every trip as intel comes in. (LOG — stays on this device)</p>
+  <div id="tripForm"></div>
+  <div class="sform" style="margin-top:10px;">
+    <button id="tripAddSite">Add another site</button>
+    <span style="flex:1"></span>
+    <button id="tripSave">Save trip</button>
+    <button onclick="document.getElementById('trip').close()">Cancel</button>
+  </div>
+</dialog>
 
 <section id="report" aria-label="Scouting report"></section>
 
@@ -262,10 +326,25 @@
   overrated noise (moon phase), so you weigh data honestly instead of chasing
   every indicator.</p>
 
+  <h4 class="disp" style="margin:10px 0 2px;">Trip notes & GPS</h4>
+  <p>In Scouting, <strong>New trip note</strong> opens a structured field form —
+  trip overview, one or more sites (details, habitat, sign, cameras, wind,
+  priority rank), and an end-of-trip summary. <strong>Use my GPS</strong> fills
+  a site's coordinates from your phone — GPS works with no cell signal, and the
+  coordinates stay on your device like all LOG data. Re-rank sites every trip;
+  the Scouting report shows your current priorities and open action items.</p>
+
   <h4 class="disp" style="margin:10px 0 2px;">Your data lives on this device</h4>
   <p>Scouting data is stored only in this browser. It does not sync.
   <strong>Export JSON regularly</strong> — phones can clear browser storage
   under pressure — and use Import to restore or move devices.</p>
+
+  <h4 class="disp" style="margin:10px 0 2px;">Dark theme & privacy</h4>
+  <p>The ☽ button toggles dark mode (it follows your system setting by
+  default). If the developer has enabled usage analytics, the app counts
+  <em>which features get used</em> (button names only) — never your notes,
+  locations, or GPS coordinates; offline usage is counted after you reconnect.
+  This build: analytics <strong>disabled</strong>.</p>
 
   <p style="margin-top:10px; font-size:12.5px; color:var(--ink-soft);">
   Not a legal document. Always verify at mdc.mo.gov before hunting.</p>
@@ -356,97 +435,367 @@
 <footer id="sources"></footer>
 
 <script type="application/json" id="seasonData">
-{"meta":{"season_label":"2026-2027","calendar_window":{"start":"2026-09-01","end":"2027-01-15"},
-"generated":"2026-07-02"},
-"location":{"latitude":38.2834,"longitude":-90.3951,
-"bmz":{"zone":"BMZ 2","source_url":"https://mdc.mo.gov/hunting-trapping/species/bear/bear-management-zone-boundaries-map","verified_date":"2026-07-02"}},
-"seasons":[
-{"id":"deer-archery","name":"Archery Deer","color":"var(--archery)","data_class":"regulation",
- "ranges":[{"start":"2026-09-15","end":"2026-11-13"},{"start":"2026-11-25","end":"2027-01-15"}],
- "notes":"Statewide. One antlered deer max before the November firearms portion.",
- "source_url":"https://mdc.mo.gov/newsroom/mdc-sets-deer-turkey-hunting-dates-2026-2027-seasons","verified_date":"2026-07-02"},
-{"id":"deer-early-antlerless","name":"Firearms Early Antlerless","color":"var(--antlerless)","data_class":"regulation",
- "needs_verification":true,
- "ranges":[{"start":"2026-10-09","end":"2026-10-11"}],
- "notes":"Open counties only — Jefferson County status unverified until the 2026 Fall booklet publishes.",
- "source_url":"https://mdc.mo.gov/newsroom/mdc-sets-deer-turkey-hunting-dates-2026-2027-seasons","verified_date":"2026-07-02"},
-{"id":"deer-early-youth","name":"Firearms Early Youth","color":"var(--youth)","data_class":"regulation",
- "ranges":[{"start":"2026-10-24","end":"2026-10-25"}],
- "notes":"Ages 6–15. Moved a week earlier in 2026 (Halloween-overlap rule).",
- "source_url":"https://mdc.mo.gov/newsroom/mdc-sets-deer-turkey-hunting-dates-2026-2027-seasons","verified_date":"2026-07-02"},
-{"id":"deer-november","name":"Firearms November Portion","color":"var(--firearms)","data_class":"regulation",
- "ranges":[{"start":"2026-11-14","end":"2026-11-24"}],
- "notes":"Hunter orange required. One antlered deer for the whole firearms season.",
- "source_url":"https://mdc.mo.gov/newsroom/mdc-sets-deer-turkey-hunting-dates-2026-2027-seasons","verified_date":"2026-07-02"},
-{"id":"deer-late-youth","name":"Firearms Late Youth","color":"var(--youth)","data_class":"regulation",
- "ranges":[{"start":"2026-11-27","end":"2026-11-29"}],
- "notes":"Ages 6–15.",
- "source_url":"https://mdc.mo.gov/newsroom/mdc-sets-deer-turkey-hunting-dates-2026-2027-seasons","verified_date":"2026-07-02"},
-{"id":"deer-late-antlerless","name":"Firearms Late Antlerless","color":"var(--antlerless)","data_class":"regulation",
- "needs_verification":true,
- "ranges":[{"start":"2026-12-05","end":"2026-12-13"}],
- "notes":"Open counties only — Jefferson County status unverified until the 2026 Fall booklet publishes.",
- "source_url":"https://mdc.mo.gov/newsroom/mdc-sets-deer-turkey-hunting-dates-2026-2027-seasons","verified_date":"2026-07-02"},
-{"id":"deer-alt","name":"Firearms Alternative Methods","color":"var(--alt)","data_class":"regulation",
- "ranges":[{"start":"2026-12-26","end":"2027-01-05"}],
- "notes":"Muzzleloaders, cap-and-ball, centerfire handguns, air guns, bows, atlatls.",
- "source_url":"https://mdc.mo.gov/newsroom/mdc-sets-deer-turkey-hunting-dates-2026-2027-seasons","verified_date":"2026-07-02"},
-{"id":"bear","name":"Black Bear (BMZ 2, permit draw)","color":"var(--bear)","data_class":"regulation",
- "quota":true,
- "ranges":[{"start":"2026-10-17","end":"2026-10-30"}],
- "notes":"Resident draw-permit holders only. Season closes early in a zone if its quota fills. Lone bears only; no bait; no dogs; orange required. Permit holders MUST call 800-668-4045 before hunting each day.",
- "source_url":"https://mdc.mo.gov/newsroom/mdc-reminds-hunters-apply-elk-bear-permits-may","verified_date":"2026-07-02"}
-],
-"advisories":[
-{"title":"CWD sampling — Jefferson County","needs_verification":true,
- "text":"In 2025 Jefferson County was NOT a mandatory CWD sampling county (voluntary sampling encouraged). The 2026 designated-county list publishes in the July Fall booklet — re-check before opening weekend of the November Portion.",
- "source_url":"https://mdc.mo.gov/newsroom/mdc-reminds-deer-hunters-st-louis-st-charles-counties-require-mandatory-cwd-sampling","verified_date":"2026-07-02"},
-{"title":"Removed for 2026-27",
- "text":"The CWD Management Zone, the CWD portion of firearms season, and the statewide antler-point restriction have all been removed by MDC. Feed/mineral placement for deer remains prohibited in counties within 10 miles of a CWD detection (Jefferson qualifies).",
- "source_url":"https://mdc.mo.gov/hunting-trapping/species/deer","verified_date":"2026-07-02"},
-{"title":"Telecheck",
- "text":"Deer: Telecheck by 10 p.m. on day of harvest (MO Hunting app, mdc.mo.gov, or 1-866-227-2564). Bear: Telecheck within 24 hours, present at an MDC check station, and submit a premolar tooth within 10 days.",
- "source_url":"https://mdc.mo.gov/hunting-trapping/species/bear","verified_date":"2026-07-02"},
-{"title":"2027 bear draw",
- "text":"Missouri residents apply May 1–31, 2027 at mdc.mo.gov/buypermits; drawing results by ~July 1. Shown regardless of current permit status.",
- "source_url":"https://mdc.mo.gov/hunting-trapping/permits/bear-permits","verified_date":"2026-07-02"}
-],
-"models":{"rut":{"peak_start":"2026-11-06","peak_end":"2026-11-15",
- "note":"Regional east-central Missouri whitetail rut estimate, ±5 days. Heuristic model, not MDC data."}}
+{
+ "meta": {
+  "schema_version": "1.0.0",
+  "title": "MDC Hunt Calendar — 2026–27 Season Data",
+  "season_label": "2026-2027",
+  "calendar_window": {
+   "start": "2026-09-01",
+   "end": "2027-01-15"
+  },
+  "generated": "2026-07-02",
+  "disclaimer": "Not a legal document. Regulations can change. Verify at mdc.mo.gov and in the MDC 2026 Fall Deer & Turkey Hunting Regulations booklet before hunting.",
+  "data_classes": {
+   "regulation": "Officially set by MDC / Missouri Conservation Commission; source and verification date required.",
+   "model": "Computed (moon, sun, rut estimates); method noted; not regulatory.",
+   "personal": "User-entered scouting/log data; stored locally in browser."
+  }
+ },
+ "location": {
+  "name": "Pevely, MO (Jefferson County)",
+  "latitude": 38.2834,
+  "longitude": -90.3951,
+  "county": "Jefferson",
+  "bear_management_zone": {
+   "zone": "BMZ 2",
+   "basis": "Jefferson County lies east of MO-47 and south of the Missouri River, inside the BMZ 2 boundary (north from the Arkansas border on US-63 to I-44; east on I-44 to MO-47; north on MO-47 to the Missouri River; east along the river to the Illinois border).",
+   "source_url": "https://mdc.mo.gov/hunting-trapping/species/bear/bear-management-zone-boundaries-map",
+   "verified_date": "2026-07-02",
+   "data_class": "regulation"
+  }
+ },
+ "seasons": [
+  {
+   "id": "deer-archery",
+   "species": "deer",
+   "name": "Archery Deer",
+   "method": "archery",
+   "ranges": [
+    {
+     "start": "2026-09-15",
+     "end": "2026-11-13"
+    },
+    {
+     "start": "2026-11-25",
+     "end": "2027-01-15"
+    }
+   ],
+   "notes": "Statewide. Only one antlered deer may be taken before the November firearms portion.",
+   "source_url": "https://mdc.mo.gov/newsroom/mdc-sets-deer-turkey-hunting-dates-2026-2027-seasons",
+   "approved": "2025-12-12 Missouri Conservation Commission",
+   "verified_date": "2026-07-02",
+   "data_class": "regulation"
+  },
+  {
+   "id": "deer-firearms-early-antlerless",
+   "species": "deer",
+   "name": "Firearms Early Antlerless",
+   "method": "firearms",
+   "ranges": [
+    {
+     "start": "2026-10-09",
+     "end": "2026-10-11"
+    }
+   ],
+   "notes": "Open counties only. VERIFY Jefferson County is open in the 2026 Fall booklet (expected July 2026).",
+   "needs_verification": "county_open_status",
+   "source_url": "https://mdc.mo.gov/newsroom/mdc-sets-deer-turkey-hunting-dates-2026-2027-seasons",
+   "approved": "2025-12-12 Missouri Conservation Commission",
+   "verified_date": "2026-07-02",
+   "data_class": "regulation"
+  },
+  {
+   "id": "deer-firearms-early-youth",
+   "species": "deer",
+   "name": "Firearms Early Youth",
+   "method": "firearms",
+   "ranges": [
+    {
+     "start": "2026-10-24",
+     "end": "2026-10-25"
+    }
+   ],
+   "notes": "Ages 6–15. Moved one week earlier in 2026 under the new Halloween-overlap rule.",
+   "source_url": "https://mdc.mo.gov/newsroom/mdc-sets-deer-turkey-hunting-dates-2026-2027-seasons",
+   "approved": "2025-12-12 Missouri Conservation Commission",
+   "verified_date": "2026-07-02",
+   "data_class": "regulation"
+  },
+  {
+   "id": "deer-firearms-november",
+   "species": "deer",
+   "name": "Firearms November Portion",
+   "method": "firearms",
+   "ranges": [
+    {
+     "start": "2026-11-14",
+     "end": "2026-11-24"
+    }
+   ],
+   "notes": "Main firearms portion. One antlered deer during entire firearms season. Hunter orange required.",
+   "source_url": "https://mdc.mo.gov/newsroom/mdc-sets-deer-turkey-hunting-dates-2026-2027-seasons",
+   "approved": "2025-12-12 Missouri Conservation Commission",
+   "verified_date": "2026-07-02",
+   "data_class": "regulation"
+  },
+  {
+   "id": "deer-firearms-late-youth",
+   "species": "deer",
+   "name": "Firearms Late Youth",
+   "method": "firearms",
+   "ranges": [
+    {
+     "start": "2026-11-27",
+     "end": "2026-11-29"
+    }
+   ],
+   "notes": "Ages 6–15.",
+   "source_url": "https://mdc.mo.gov/newsroom/mdc-sets-deer-turkey-hunting-dates-2026-2027-seasons",
+   "approved": "2025-12-12 Missouri Conservation Commission",
+   "verified_date": "2026-07-02",
+   "data_class": "regulation"
+  },
+  {
+   "id": "deer-firearms-late-antlerless",
+   "species": "deer",
+   "name": "Firearms Late Antlerless",
+   "method": "firearms",
+   "ranges": [
+    {
+     "start": "2026-12-05",
+     "end": "2026-12-13"
+    }
+   ],
+   "notes": "Open counties only. VERIFY Jefferson County is open in the 2026 Fall booklet.",
+   "needs_verification": "county_open_status",
+   "source_url": "https://mdc.mo.gov/newsroom/mdc-sets-deer-turkey-hunting-dates-2026-2027-seasons",
+   "approved": "2025-12-12 Missouri Conservation Commission",
+   "verified_date": "2026-07-02",
+   "data_class": "regulation"
+  },
+  {
+   "id": "deer-firearms-alt-methods",
+   "species": "deer",
+   "name": "Firearms Alternative Methods",
+   "method": "alternative",
+   "ranges": [
+    {
+     "start": "2026-12-26",
+     "end": "2027-01-05"
+    }
+   ],
+   "notes": "Muzzleloaders, cap-and-ball, centerfire handguns, air-powered firearms, bows, atlatls.",
+   "source_url": "https://mdc.mo.gov/newsroom/mdc-sets-deer-turkey-hunting-dates-2026-2027-seasons",
+   "approved": "2025-12-12 Missouri Conservation Commission",
+   "verified_date": "2026-07-02",
+   "data_class": "regulation"
+  },
+  {
+   "id": "bear-2026",
+   "species": "bear",
+   "name": "Black Bear (BMZ 2)",
+   "method": "archery_and_firearms",
+   "ranges": [
+    {
+     "start": "2026-10-17",
+     "end": "2026-10-30"
+    }
+   ],
+   "quota_dependent": true,
+   "notes": "Resident draw-permit holders only, zone-specific. Season closes early in a BMZ if its harvest quota is reached (statewide: 2,000 permits, 60-bear quota). Lone bears only; no sows with cubs; no denned bears; no bait; no dogs; hunter orange required.",
+   "daily_requirement": {
+    "action": "Call 800-668-4045 before hunting each day to check quota/closure status.",
+    "applies_to": "permit_holders"
+   },
+   "post_harvest": [
+    "Telecheck within 24 hours",
+    "Present bear at designated MDC check station",
+    "Submit premolar tooth to MDC Furbearer Program within 10 days"
+   ],
+   "source_url": "https://mdc.mo.gov/newsroom/mdc-reminds-hunters-apply-elk-bear-permits-may",
+   "regulation_ref": "3 CSR 10-7.900",
+   "verified_date": "2026-07-02",
+   "data_class": "regulation"
+  }
+ ],
+ "removed_in_2026": [
+  {
+   "item": "CWD Management Zone",
+   "detail": "Zone concept removed for 2026-27; county-specific rules remain (see advisories).",
+   "source_url": "https://mdc.mo.gov/hunting-trapping/species/deer",
+   "verified_date": "2026-07-02"
+  },
+  {
+   "item": "CWD Portion of firearms deer season",
+   "detail": "Eliminated; do not render a CWD/antlerless-CWD layer.",
+   "source_url": "https://mdc.mo.gov/hunting-trapping/species/deer",
+   "verified_date": "2026-07-02"
+  },
+  {
+   "item": "Antler-point restriction",
+   "detail": "Removed for all counties.",
+   "source_url": "https://mdc.mo.gov/hunting-trapping/species/deer",
+   "verified_date": "2026-07-02"
+  }
+ ],
+ "advisories": [
+  {
+   "id": "cwd-sampling",
+   "title": "CWD sampling — Jefferson County",
+   "status": "voluntary_expected",
+   "detail": "In 2025, Jefferson County was NOT a mandatory sampling county (voluntary sampling encouraged); St. Louis and St. Charles were mandatory. The 2026 designated-county list publishes in the July Fall booklet — re-verify before rendering any compliance language.",
+   "needs_verification": "2026_designated_county_list",
+   "source_url": "https://mdc.mo.gov/newsroom/mdc-reminds-deer-hunters-st-louis-st-charles-counties-require-mandatory-cwd-sampling",
+   "verified_date": "2026-07-02",
+   "data_class": "regulation"
+  },
+  {
+   "id": "feed-mineral-ban",
+   "title": "Feed and mineral placement prohibited",
+   "detail": "Placing grain, salt, minerals, or other consumables to attract deer is prohibited year-round in counties with a CWD detection or within 10 miles of one. Jefferson County has CWD history — treat the ban as in effect.",
+   "source_url": "https://mdc.mo.gov/hunting-trapping/species/deer",
+   "verified_date": "2026-07-02",
+   "data_class": "regulation"
+  },
+  {
+   "id": "deer-telecheck",
+   "title": "Deer Telecheck deadline",
+   "detail": "Telecheck by 10 p.m. on day of harvest via MO Hunting app, mdc.mo.gov, or 1-866-227-2564. Confirm exact wording against the 2026 Fall booklet.",
+   "needs_verification": "booklet_wording",
+   "verified_date": "2026-07-02",
+   "data_class": "regulation"
+  }
+ ],
+ "reminders": [
+  {
+   "id": "bear-apply-2027",
+   "date_range": {
+    "start": "2027-05-01",
+    "end": "2027-05-31"
+   },
+   "title": "Apply for 2027 black bear permit draw",
+   "detail": "Missouri residents apply during May at mdc.mo.gov/buypermits; drawing results ~July 1. Shown to all users regardless of permit status.",
+   "source_url": "https://mdc.mo.gov/hunting-trapping/permits/bear-permits",
+   "verified_date": "2026-07-02",
+   "data_class": "regulation"
+  },
+  {
+   "id": "booklet-verification",
+   "date_range": {
+    "start": "2026-07-01",
+    "end": "2026-08-31"
+   },
+   "title": "Verify against 2026 Fall Deer & Turkey booklet",
+   "detail": "Confirm: antlerless open-county status for Jefferson, 2026 mandatory CWD sampling counties/days, Telecheck wording, managed-hunt dates.",
+   "data_class": "project_task"
+  }
+ ],
+ "models": {
+  "rut": {
+   "method": "Regional whitetail rut pattern for east-central Missouri; peak estimated Nov 6–15 ±5 days. Heuristic, not MDC data.",
+   "data_class": "model"
+  },
+  "sun": {
+   "method": "SunCalc at location coordinates.",
+   "data_class": "model"
+  },
+  "moon": {
+   "method": "Astronomical phase algorithm as in existing app.",
+   "data_class": "model"
+  }
+ }
 }
 </script>
 
 <script>
 "use strict";
-/* ---------- data: embedded block is canonical; external JSON overrides if present ---------- */
-let DATA = JSON.parse(document.getElementById("seasonData").textContent);
+/* ---------- analytics (OFF by default; feature counts only) ----------
+   To enable: create a free GoatCounter account and set your site code below,
+   e.g. "edodev". Events are feature names ONLY — never scouting content,
+   notes, or GPS coordinates. Offline usage queues locally and sends after
+   reconnect (counted at send time, so offline timestamps are approximate). */
+const ANALYTICS_SITE = "";                       /* "" = fully disabled */
+const AQ_KEY = "mdc_metrics_q";
+function track(ev){
+  if (!ANALYTICS_SITE) return;
+  let q = [];
+  try{ q = JSON.parse(localStorage.getItem(AQ_KEY)) || []; }catch(e){}
+  q.push({p:"/app/" + ev, ts:Date.now()});
+  localStorage.setItem(AQ_KEY, JSON.stringify(q.slice(-200)));
+  if (navigator.onLine) flushMetrics();
+}
+function flushMetrics(){
+  if (!ANALYTICS_SITE || !navigator.onLine) return;
+  let q = [];
+  try{ q = JSON.parse(localStorage.getItem(AQ_KEY)) || []; }catch(e){}
+  if (!q.length) return;
+  localStorage.setItem(AQ_KEY, "[]");
+  q.forEach(item => {
+    fetch(`https://${ANALYTICS_SITE}.goatcounter.com/count?p=${
+      encodeURIComponent(item.p)}&rnd=${item.ts}`,
+      {mode:"no-cors", keepalive:true}).catch(() => {});
+  });
+}
+addEventListener("online", flushMetrics);
+/* count feature buttons by id with one listener */
+document.addEventListener("click", e => {
+  const b = e.target.closest("button[id^='btn']");
+  if (b) track(b.id.replace("btn","").toLowerCase());
+});
+
+/* ---------- theme ---------- */
+function applyTheme(t){
+  document.documentElement.dataset.theme = t;
+  document.querySelector('meta[name="theme-color"]')
+    .setAttribute("content", t === "dark" ? "#161A14" : "#232A20");
+}
+applyTheme(localStorage.getItem("mdc_theme") ||
+  (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"));
+
+/* ---------- data: embedded block (synced by sync-data.py) is canonical;
+   external JSON overrides when served over HTTP ---------- */
+let DATA = normalize(JSON.parse(
+  document.getElementById("seasonData").textContent));
 const boot = fetch("seasons-2026.json")
   .then(r => r.ok ? r.json() : null)
   .then(ext => { if (ext && ext.seasons) DATA = normalize(ext); })
   .catch(() => {})            /* file:// or missing file — embedded data stands */
   .finally(render);
 
-/* map the richer standalone schema onto the render schema if it is loaded */
+/* map the standalone schema onto the render schema */
 function normalize(ext){
   const colors = {archery:"var(--archery)", firearms:"var(--firearms)",
     alternative:"var(--alt)", archery_and_firearms:"var(--bear)"};
+  const advisories = (ext.advisories||[]).map(a => ({title:a.title,
+    text:a.detail || a.text || "",
+    needs_verification:!!a.needs_verification, source_url:a.source_url || "",
+    verified_date:a.verified_date || ""}));
+  (ext.reminders||[]).forEach(r => advisories.push({title:r.title,
+    text:r.detail || "", needs_verification:false,
+    source_url:r.source_url || "", verified_date:r.verified_date || ""}));
   return {
     meta: ext.meta, location: {latitude: ext.location.latitude,
-      longitude: ext.location.longitude, bmz: ext.location.bear_management_zone},
+      longitude: ext.location.longitude,
+      bmz: ext.location.bear_management_zone || ext.location.bmz},
     seasons: ext.seasons.map(s => ({
-      id: s.id, name: s.name, ranges: s.ranges, notes: s.notes,
-      quota: !!s.quota_dependent, needs_verification: !!s.needs_verification,
-      data_class: s.data_class, source_url: s.source_url, verified_date: s.verified_date,
+      id: s.id, name: s.name, ranges: s.ranges, notes: s.notes || "",
+      quota: !!s.quota_dependent || !!s.quota,
+      needs_verification: !!s.needs_verification,
+      data_class: s.data_class, source_url: s.source_url,
+      verified_date: s.verified_date,
       color: s.species === "bear" ? "var(--bear)"
-        : s.name.includes("Youth") ? "var(--youth)"
-        : s.name.includes("Antlerless") ? "var(--antlerless)"
+        : (s.name||"").includes("Youth") ? "var(--youth)"
+        : (s.name||"").includes("Antlerless") ? "var(--antlerless)"
         : colors[s.method] || "var(--archery)"
     })),
-    advisories: (ext.advisories||[]).map(a => ({title:a.title, text:a.detail,
-      needs_verification:!!a.needs_verification, source_url:a.source_url,
-      verified_date:a.verified_date})),
+    advisories,
+    freshest: [...ext.seasons.map(s => s.verified_date),
+      ...(ext.advisories||[]).map(a => a.verified_date)]
+      .filter(Boolean).sort().pop() || "",
     models: {rut:{peak_start:"2026-11-06", peak_end:"2026-11-15",
-      note: ext.models?.rut?.method || ""}}
+      note: (ext.models && ext.models.rut &&
+        (ext.models.rut.method || ext.models.rut.note)) || ""}}
   };
 }
 
@@ -519,9 +868,12 @@ permitSel.addEventListener("change", () => {
 const SKEY = "mdc_scout_v1";
 function loadScout(){
   try{ const s = JSON.parse(localStorage.getItem(SKEY));
-    if (s && Array.isArray(s.locations) && Array.isArray(s.entries)) return s;
+    if (s && Array.isArray(s.locations) && Array.isArray(s.entries)){
+      if (!Array.isArray(s.trips)) s.trips = [];   /* migrate pre-trip stores */
+      return s;
+    }
   }catch(e){}
-  return {version:1, locations:[], entries:[]};
+  return {version:1, locations:[], entries:[], trips:[]};
 }
 let SCOUT = loadScout();
 function saveScout(){ localStorage.setItem(SKEY, JSON.stringify(SCOUT)); }
@@ -601,6 +953,7 @@ function renderScoutPanel(){
   if (!SCOUT.locations.length){
     t.innerHTML = `<tr><td style="color:var(--ink-soft)">No locations yet —
       add stands, cameras, and access points above.</td></tr>`;
+    renderTripList();
     return;
   }
   const wt = windToday();
@@ -620,6 +973,7 @@ function renderScoutPanel(){
         <td><button class="xbtn" data-del-loc="${l.id}"
           aria-label="Delete ${esc(l.name)}">\u2715</button></td></tr>`;
     }).join("");
+  renderTripList();
   t.querySelectorAll("[data-del-loc]").forEach(b =>
     b.onclick = () => {
       const id = b.getAttribute("data-del-loc");
@@ -633,7 +987,266 @@ function renderScoutPanel(){
 function esc(s){ return String(s).replace(/[&<>"']/g,
   c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 
+/* ---------- trip notes (LOG): schema-driven form from field template ------ */
+const TF = (k,label,type="text",opts)=>({k,label,type,opts});
+const TRIP_OVERVIEW = [
+  TF("date","Date","date"), TF("scouts","Scout(s)"),
+  TF("start","Starting point / total drive time"),
+  TF("weather","Weather & wind"), TF("areas","Areas visited today"),
+  TF("hours","Total hours on ground"),
+  TF("takeaway","Key takeaway from today","textarea")];
+const SITE_SECTIONS = [
+ {title:"Site details", fields:[
+  TF("sname","Site ID / Name (e.g. Peck Ranch Ridge 3)"),
+  TF("coords","Coordinates (lat,lon)","gps"),
+  TF("county","County / Ranger District or Landowner"),
+  TF("access","Access type","select",
+    ["","Private","Public CA / National Forest","Edge / Lease"]),
+  TF("permission","Permission status (if private)"),
+  TF("route","Route / parking notes"),
+  TF("drive","Drive time from home base")]},
+ {title:"Habitat assessment", fields:[
+  TF("mast","Dominant timber / mast (white oak %, red oak, hickory)","textarea"),
+  TF("acorn","Current acorn drop","select",
+    ["","None","Light","Moderate","Heavy"]),
+  TF("cover","Understory / cover quality (thickets, corridors)"),
+  TF("terrain","Terrain features (ridges, benches, saddles, S-slopes)"),
+  TF("water","Water sources nearby"),
+  TF("disturb","Recent disturbance (timber, windthrow, burns)"),
+  TF("suit","Overall bear suitability (1–10)","number"),
+  TF("suitwhy","Why that rating?")]},
+ {title:"Sign & activity observed", fields:[
+  TF("tracks","Fresh tracks — size / direction / freshness"),
+  TF("scat","Scat — contents / freshness"),
+  TF("digs","Digs / rootings"),
+  TF("rubs","Rubs / claw marks / tree damage"),
+  TF("trails","Trails / game paths — width, direction to food/cover"),
+  TF("otherwl","Other wildlife sign (deer, turkey…)"),
+  TF("photosyn","Bear photos / video captured today?","select",["","No","Yes"]),
+  TF("photoct","Count (if yes)","number")]},
+ {title:"Camera status", fields:[
+  TF("camct","Cameras at this site","number"),
+  TF("camlast","Last checked / deployed"),
+  TF("cards","Cards pulled today?","select",["","No","Yes"]),
+  TF("camnew","New bear activity on cards?"),
+  TF("cambatt","Battery / card status"),
+  TF("camnext","Next check date","date")]},
+ {title:"Wind & approach", fields:[
+  TF("windprev","Prevailing wind today"),
+  TF("windbest","Best stand / approach locations"),
+  TF("windrisk","Risk areas (thermals, swirling wind)")]},
+ {title:"Assessment & priority", fields:[
+  TF("act","Current bear activity level","select",
+    ["","None","Low","Moderate","High"]),
+  TF("rank","Rank for season (1 = highest priority)","number"),
+  TF("rankwhy","Why this ranking? (food + sign + access)"),
+  TF("strengths","Strengths of site"),
+  TF("weak","Weaknesses / risks (pressure, access, closure risk)")]},
+ {title:"Action items", fields:[
+  TF("actions","One per line: contact landowner, move cameras, return date…",
+     "textarea")]},
+ {title:"Photos / references", fields:[
+  TF("photorefs","Photo file names + what each shows","textarea")]}];
+const TRIP_SUMMARY = [
+  TF("top_sites","Top 2–3 sites from today"),
+  TF("mast_all","Overall mast condition observed"),
+  TF("contacts","New landowner / outfitter contacts made"),
+  TF("next_plan","Next trip plan"),
+  TF("items","Items needed for next trip (batteries, locks, maps…)")];
+
+function fieldHtml(f, val){
+  const v = esc(val == null ? "" : val);
+  const id = "tf_" + f.k;
+  let inp;
+  if (f.type === "textarea")
+    inp = `<textarea data-k="${f.k}" rows="2" style="width:100%">${v}</textarea>`;
+  else if (f.type === "select")
+    inp = `<select data-k="${f.k}">${f.opts.map(o =>
+      `<option${o === val ? " selected" : ""}>${esc(o)}</option>`).join("")}</select>`;
+  else if (f.type === "gps")
+    inp = `<input data-k="${f.k}" type="text" value="${v}"
+      placeholder="38.28340,-90.39510" style="min-width:170px">
+      <button type="button" data-gps title="Fill from device GPS — works
+      offline; nothing is transmitted">Use my GPS</button>`;
+  else
+    inp = `<input data-k="${f.k}" type="${f.type}" value="${v}"
+      ${f.type==="number" ? 'min="0" max="99" style="width:70px"' : 'style="min-width:220px"'}>`;
+  return `<div class="sform" style="margin:3px 0;">
+    <label style="min-width:200px; font-size:12.5px;">${f.label}</label>${inp}</div>`;
+}
+function sectionHtml(fields, data, open){
+  return fields.map(f => fieldHtml(f, data[f.k])).join("");
+}
+function siteBlockHtml(site){
+  return `<fieldset class="siteblk" style="border:1.5px solid var(--personal);
+    border-radius:3px; margin:8px 0; padding:6px 10px;">
+    <legend class="disp" style="font-size:14px; padding:0 6px;">Site</legend>` +
+    SITE_SECTIONS.map((sec,i) =>
+      `<details${i===0 ? " open" : ""}><summary class="disp"
+        style="cursor:pointer; font-size:13.5px; margin:4px 0;">${sec.title}
+        </summary>${sectionHtml(sec.fields, site || {})}</details>`).join("") +
+    `<button type="button" data-del-site class="xbtn"
+      style="margin-top:4px;">Remove site \u2715</button></fieldset>`;
+}
+function openTripDialog(trip){
+  const T = trip || {overview:{date:todayISO()}, sites:[{}], summary:{}};
+  const form = document.getElementById("tripForm");
+  form.dataset.editing = trip ? trip.id : "";
+  form.innerHTML =
+    `<h4 class="disp">Trip overview</h4>
+     <div id="tOverview">${sectionHtml(TRIP_OVERVIEW, T.overview || {})}</div>
+     <h4 class="disp" style="margin-top:8px;">Sites (${(T.sites||[{}]).length})</h4>
+     <div id="tSites">${(T.sites && T.sites.length ? T.sites : [{}])
+       .map(siteBlockHtml).join("")}</div>
+     <h4 class="disp" style="margin-top:8px;">End-of-trip summary</h4>
+     <div id="tSummary">${sectionHtml(TRIP_SUMMARY, T.summary || {})}</div>`;
+  document.getElementById("trip").showModal();
+}
+function readSection(el){
+  const out = {};
+  el.querySelectorAll("[data-k]").forEach(i => {
+    const v = i.value.trim(); if (v) out[i.getAttribute("data-k")] = v; });
+  return out;
+}
+document.getElementById("tripForm").addEventListener("click", e => {
+  if (e.target.matches("[data-gps]")){
+    const input = e.target.parentElement.querySelector('[data-k="coords"]');
+    if (!navigator.geolocation)
+      return alert("Geolocation isn't available in this browser.");
+    e.target.textContent = "Locating\u2026";
+    navigator.geolocation.getCurrentPosition(p => {
+      input.value = p.coords.latitude.toFixed(5) + "," +
+                    p.coords.longitude.toFixed(5);
+      e.target.textContent = "Use my GPS"; track("gps_fill");
+    }, err => {
+      e.target.textContent = "Use my GPS";
+      alert("Couldn't get a fix: " + err.message +
+        " (GPS works offline, but the browser needs location permission.)");
+    }, {enableHighAccuracy:true, timeout:15000});
+  }
+  if (e.target.matches("[data-del-site]")){
+    const blocks = document.querySelectorAll("#tSites .siteblk");
+    if (blocks.length <= 1) return alert("A trip needs at least one site.");
+    e.target.closest(".siteblk").remove();
+  }
+});
+document.getElementById("tripAddSite").onclick = () =>
+  document.getElementById("tSites")
+    .insertAdjacentHTML("beforeend", siteBlockHtml({}));
+document.getElementById("btnNewTrip").onclick = () => openTripDialog(null);
+document.getElementById("tripSave").onclick = () => {
+  const form = document.getElementById("tripForm");
+  const trip = {
+    id: form.dataset.editing || uid(),
+    overview: readSection(document.getElementById("tOverview")),
+    sites: [...document.querySelectorAll("#tSites .siteblk")]
+      .map(b => readSection(b)),
+    summary: readSection(document.getElementById("tSummary"))
+  };
+  if (!trip.overview.date) return alert("Give the trip a date.");
+  const i = SCOUT.trips.findIndex(t => t.id === trip.id);
+  if (i >= 0) SCOUT.trips[i] = trip; else SCOUT.trips.push(trip);
+  saveScout(); document.getElementById("trip").close(); render();
+  track("trip_save");
+};
+function renderTripList(){
+  const el = document.getElementById("tripList");
+  if (!SCOUT.trips.length){
+    el.innerHTML = `<div class="note">No trip notes yet.</div>`; return; }
+  el.innerHTML = SCOUT.trips
+    .slice().sort((a,b) => (b.overview.date||"") < (a.overview.date||"") ? -1 : 1)
+    .map(t => {
+      const best = t.sites.filter(s => s.rank)
+        .sort((a,b) => (+a.rank) - (+b.rank))[0];
+      return `<div class="entry" style="display:flex; gap:8px; align-items:center;">
+        <strong>${esc(t.overview.date || "undated")}</strong>
+        <span>${t.sites.length} site${t.sites.length>1?"s":""}${
+          best ? ` · top: ${esc(best.sname || "site")} (rank ${esc(best.rank)})` : ""}${
+          t.overview.takeaway ? " — " + esc(t.overview.takeaway).slice(0,90) : ""}</span>
+        <span style="flex:1"></span>
+        <button class="xbtn" style="color:var(--personal)"
+          data-edit-trip="${t.id}">\u270E</button>
+        <button class="xbtn" data-del-trip="${t.id}">\u2715</button></div>`;
+    }).join("");
+  el.querySelectorAll("[data-edit-trip]").forEach(b => b.onclick = () =>
+    openTripDialog(SCOUT.trips.find(t =>
+      t.id === b.getAttribute("data-edit-trip"))));
+  el.querySelectorAll("[data-del-trip]").forEach(b => b.onclick = () => {
+    if (!confirm("Delete this trip note?")) return;
+    SCOUT.trips = SCOUT.trips.filter(t =>
+      t.id !== b.getAttribute("data-del-trip"));
+    saveScout(); render();
+  });
+}
+const tripsOn = iso => SCOUT.trips.filter(t => t.overview.date === iso);
+
 function renderCalendar(){
+  const view = localStorage.getItem("mdc_view") || "month";
+  document.getElementById("viewSel").value = view;
+  if (view !== "month")
+    return renderAgenda(view === "week" ? 7 : 14);
+  renderMonthGrid();
+}
+
+function renderAgenda(nDays){
+  const cal = document.getElementById("cal"); cal.innerHTML = "";
+  const win = DATA.meta.calendar_window;
+  const today = todayISO();
+  /* start today; if the window hasn't opened yet, preview from its start */
+  let startIso = today >= win.start ? today : win.start;
+  if (startIso > win.end) startIso = win.start;   /* season over: show top */
+  const [sy,sm,sd] = startIso.split("-").map(Number);
+  const rut = DATA.models.rut;
+  const wt = windToday();
+  const sect = document.createElement("section"); sect.className = "month";
+  sect.innerHTML = `<h2 class="disp">Next ${nDays} days</h2>`;
+  for (let i = 0; i < nDays; i++){
+    const date = new Date(sy, sm-1, sd + i);
+    const iso = d2s(new Date(sy, sm-1, sd + i, 12));
+    if (iso > win.end) break;
+    const open = openSeasons(iso).filter(s => !hidden.has(s.id));
+    const sun = sunTimes(date, DATA.location.latitude, DATA.location.longitude);
+    const mi = moonInfo(date);
+    const row = document.createElement("div");
+    row.className = "agrow" + (iso === today ? " today" : "");
+    row.tabIndex = 0;
+    let body = open.length
+      ? open.map(s => `<span class="agchip${s.needs_verification
+          ? " verify" : ""}" style="background:${s.color}">${s.name}${
+          s.needs_verification ? " \u26A0" : ""}</span>`).join("")
+      : `<span class="agmeta">no seasons open</span>`;
+    if (permitSel.value === "holder" && open.some(s => s.quota) && iso >= today)
+      body += `<span class="chip">CALL QUOTA LINE</span>`;
+    let meta = `prime ${sun.primeAM} · ${sun.primePM}`;
+    if (mi.major) meta += ` · ${mi.icon} ${mi.name}`;
+    if (iso >= rut.peak_start && iso <= rut.peak_end)
+      meta += ` · <span style="color:#B4231F">\u25B2 rut peak</span>`;
+    winOn(iso).forEach(w => { meta += ` · \u25CC ${w.label}`; });
+    if (iso === today && wt){
+      const good = SCOUT.locations.filter(l =>
+        l.winds && l.winds.includes(wt)).map(l => esc(l.name));
+      meta += good.length
+        ? ` · wind ${wt}: <span class="huntable">${good.join(", ")}</span>`
+        : SCOUT.locations.some(l => l.winds && l.winds.length)
+          ? ` · wind ${wt}: <span class="nowind">no stand favors it</span>` : "";
+    }
+    const ents = entriesOn(iso);
+    if (ents.length) meta += ` · <span style="color:var(--personal)">${
+      ents.length} log entr${ents.length>1?"ies":"y"}</span>`;
+    row.innerHTML = `<span class="agdate"><span class="dw">${
+      date.toLocaleDateString("en-US",{weekday:"short"})}</span>${
+      date.toLocaleDateString("en-US",{month:"short", day:"numeric"})}</span>
+      <span class="agbody">${body}<span class="agmeta">${meta}</span></span>`;
+    row.addEventListener("click", () => showDetail(iso, date));
+    row.addEventListener("keydown", e => {
+      if (e.key === "Enter" || e.key === " ")
+        { e.preventDefault(); showDetail(iso, date); }});
+    sect.appendChild(row);
+  }
+  cal.appendChild(sect);
+}
+
+function renderMonthGrid(){
   const cal = document.getElementById("cal"); cal.innerHTML = "";
   const win = DATA.meta.calendar_window;
   const start = mkDate(win.start), end = mkDate(win.end);
@@ -667,12 +1280,15 @@ function renderCalendar(){
         cell.insertAdjacentHTML("beforeend",
           `<span class="rut" title="Rut peak estimate (model)">\u25B2</span>`);
       const ents = entriesOn(iso);
-      if (ents.length){
-        const marks = ents.map(e => e.kind === "plan"
+      const trs = tripsOn(iso);
+      if (ents.length || trs.length){
+        const marks = (trs.length ? "\u25A4" : "") +
+          ents.map(e => e.kind === "plan"
           ? (e.done ? "\u25CF" : "\u25CB") : "\u25CF").slice(0,4).join("");
         cell.insertAdjacentHTML("beforeend",
-          `<span class="pmark" title="${ents.length} scouting entr${
-            ents.length>1?"ies":"y"} (personal log)">${marks}</span>`);
+          `<span class="pmark" title="${ents.length} entr${
+            ents.length===1?"y":"ies"}${trs.length ? ", trip note" : ""
+            } (personal log)">${marks}</span>`);
       }
       if (winOn(iso).length)
         cell.insertAdjacentHTML("beforeend",
@@ -808,12 +1424,21 @@ function hideDetail(){
 
 function renderSources(){
   const f = document.getElementById("sources");
-  let html = `<h4 class="disp">Advisories</h4>`;
+  const badge = document.getElementById("netBadge");
+  if (DATA.freshest) badge.textContent =
+    `OFFLINE — cached data, verified ${DATA.freshest}`;
+  let html = `<p style="font-size:14px;color:var(--ink)">
+    <strong class="disp">Data freshness:</strong> season data last verified
+    <strong>${DATA.freshest || "unknown"}</strong> against MDC sources ·
+    calendar generated ${DATA.meta.generated || "—"} · regulations can change —
+    the app checks for updated data whenever you open it online.</p>`;
+  html += `<h4 class="disp">Advisories</h4>`;
   DATA.advisories.forEach(a => {
     html += `<p><strong>${a.title}${a.needs_verification
       ? ' <span class="vbadge">\u26A0 re-verify (booklet pending)</span>' : ""}
       :</strong> ${a.text}
-      <a href="${a.source_url}">source</a> · verified ${a.verified_date}</p>`;
+      ${a.source_url ? `<a href="${a.source_url}">source</a>` : ""}
+      ${a.verified_date ? ` · verified ${a.verified_date}` : ""}</p>`;
   });
   html += `<h4 class="disp">Season sources</h4>`;
   DATA.seasons.forEach(s => {
@@ -859,12 +1484,63 @@ function netBadge(){
 addEventListener("online", netBadge);
 addEventListener("offline", netBadge);
 netBadge();
+track(navigator.onLine ? "app_open" : "app_open_offline");
+addEventListener("appinstalled", () => track("pwa_installed"));
+document.getElementById("btnTheme").onclick = () => {
+  const next = document.documentElement.dataset.theme === "dark"
+    ? "light" : "dark";
+  localStorage.setItem("mdc_theme", next); applyTheme(next);
+};
 
 /* ---------- help ---------- */
 document.getElementById("btnHelp").onclick = () =>
   document.getElementById("help").showModal();
 document.getElementById("btnCraft").onclick = () =>
   document.getElementById("craft").showModal();
+
+/* ---------- view switcher ---------- */
+document.getElementById("viewSel").addEventListener("change", e => {
+  localStorage.setItem("mdc_view", e.target.value); render(); });
+
+/* ---------- iCal export of season openers/closers (F2) ---------- */
+document.getElementById("btnIcal").onclick = () => {
+  const stamp = new Date().toISOString().replace(/[-:]/g,"").slice(0,15)+"Z";
+  const dt = iso => iso.replace(/-/g,"");
+  const plus1 = iso => { const [y,m,d] = iso.split("-").map(Number);
+    return d2s(new Date(y, m-1, d+1, 12)); };
+  const esci = s => s.replace(/([,;\\])/g,"\\$1");
+  let ev = [];
+  DATA.seasons.forEach(s => s.ranges.forEach((r,i) => {
+    ev.push(["BEGIN:VEVENT",
+      `UID:${s.id}-${i}@mdc-hunt-calendar`,
+      `DTSTAMP:${stamp}`,
+      `DTSTART;VALUE=DATE:${dt(r.start)}`,
+      `DTEND;VALUE=DATE:${dt(plus1(r.end))}`,
+      `SUMMARY:${esci(s.name)}${s.needs_verification
+        ? " (verify county status)" : ""}${s.quota
+        ? " (quota-dependent)" : ""}`,
+      `DESCRIPTION:${esci((s.notes||"") +
+        " Source: " + (s.source_url||"") +
+        " Verified: " + (s.verified_date||""))}`,
+      "END:VEVENT"].join("\r\n"));
+  }));
+  ev.push(["BEGIN:VEVENT",
+    "UID:bear-apply-2027@mdc-hunt-calendar",
+    `DTSTAMP:${stamp}`,
+    "DTSTART;VALUE=DATE:20270501",
+    "DTEND;VALUE=DATE:20270601",
+    "SUMMARY:Apply: 2027 MO black bear permit draw (residents)",
+    "DESCRIPTION:Apply at mdc.mo.gov/buypermits during May\\; results ~July 1.",
+    "END:VEVENT"].join("\r\n"));
+  const ics = ["BEGIN:VCALENDAR","VERSION:2.0",
+    "PRODID:-//MDC Hunt Calendar//2026-27//EN",
+    ev.join("\r\n"),"END:VCALENDAR"].join("\r\n");
+  const blob = new Blob([ics], {type:"text/calendar"});
+  const a = document.createElement("a");
+  a.download = "mdc-hunt-seasons-2026-27.ics";
+  a.href = URL.createObjectURL(blob); a.click();
+  URL.revokeObjectURL(a.href);
+};
 
 /* ---------- scouting UI wiring ---------- */
 document.getElementById("btnScout").onclick = () =>
@@ -904,9 +1580,37 @@ document.getElementById("importFile").addEventListener("change", e => {
       const s = j.scout || j;
       if (!Array.isArray(s.locations) || !Array.isArray(s.entries))
         throw new Error("shape");
-      if (!confirm(`Import ${s.locations.length} locations and ${
-        s.entries.length} entries? This replaces current scouting data.`)) return;
-      SCOUT = {version:1, locations:s.locations, entries:s.entries};
+      /* per-record shape check: keep valid records, count the rest */
+      const isoRe = /^\d{4}-\d{2}-\d{2}$/;
+      const locs = s.locations.filter(l => l && typeof l === "object" &&
+        typeof l.name === "string" && l.name.trim())
+        .map(l => ({id:String(l.id || uid()), name:String(l.name).slice(0,80),
+          type:String(l.type || "Stand").slice(0,30),
+          coords:String(l.coords || "").slice(0,40),
+          winds:Array.isArray(l.winds)
+            ? l.winds.filter(w => DIRS.includes(w)) : []}));
+      const locIds = new Set(locs.map(l => l.id));
+      const ents = s.entries.filter(en => en && typeof en === "object" &&
+        typeof en.date === "string" && isoRe.test(en.date) &&
+        ["plan","obs"].includes(en.kind))
+        .map(en => ({id:String(en.id || uid()), date:en.date, kind:en.kind,
+          species:["Deer","Bear","Both"].includes(en.species)
+            ? en.species : "Deer",
+          loc:locIds.has(en.loc) ? en.loc : null,
+          notes:String(en.notes || "").slice(0,500), done:!!en.done}));
+      const trips = Array.isArray(s.trips)
+        ? s.trips.filter(t => t && typeof t === "object" &&
+            t.overview && Array.isArray(t.sites))
+          .map(t => ({id:String(t.id || uid()), overview:t.overview,
+            sites:t.sites.slice(0,20), summary:t.summary || {}}))
+        : [];
+      const dropped = (s.locations.length - locs.length) +
+                      (s.entries.length - ents.length) +
+                      ((Array.isArray(s.trips) ? s.trips.length : 0) - trips.length);
+      if (!confirm(`Import ${locs.length} locations and ${ents.length} entries${
+        dropped ? ` (${dropped} invalid record${dropped>1?"s":""} skipped)` : ""
+        }? This replaces current scouting data.`)) return;
+      SCOUT = {version:1, locations:locs, entries:ents, trips};
       saveScout(); render();
     }catch(err){ alert("That file isn't a valid scouting backup."); }
     e.target.value = "";
@@ -947,6 +1651,28 @@ document.getElementById("btnReport").onclick = () => {
           n === 0 ? " · <em>gap: not yet scouted</em>" : ""}</li>`;
       }).join("") + "</ul>"
     : `<p style="color:var(--ink-soft)">No locations registered.</p>`;
+  html += `<h4 class="disp">Trip notes</h4>`;
+  if (SCOUT.trips.length){
+    const ranked = SCOUT.trips.flatMap(t => t.sites.map(s =>
+        ({...s, tdate:t.overview.date || ""})))
+      .filter(s => s.rank).sort((a,b) => (+a.rank) - (+b.rank)).slice(0,5);
+    html += `<p>${SCOUT.trips.length} trip${SCOUT.trips.length>1?"s":""} logged,
+      ${SCOUT.trips.reduce((n,t) => n + t.sites.length, 0)} site visits.</p>`;
+    if (ranked.length)
+      html += `<p><strong>Current site priorities:</strong></p><ul>` +
+        ranked.map(s => `<li>#${esc(s.rank)} ${esc(s.sname || "unnamed site")}${
+          s.coords ? " (" + esc(s.coords) + ")" : ""} — activity: ${
+          esc(s.act || "?")}${s.acorn ? ", acorns: " + esc(s.acorn) : ""}${
+          s.rankwhy ? " — " + esc(s.rankwhy) : ""} <em>(${esc(s.tdate)})</em></li>`)
+        .join("") + "</ul>";
+    const actions = SCOUT.trips.flatMap(t => t.sites.flatMap(s =>
+      (s.actions || "").split("\n").filter(x => x.trim())
+        .map(x => ({x:x.trim(), d:t.overview.date}))));
+    if (actions.length)
+      html += `<p><strong>Open action items:</strong></p><ul>` +
+        actions.slice(0,15).map(a =>
+          `<li>${esc(a.x)} <em>(${esc(a.d || "")})</em></li>`).join("") + "</ul>";
+  } else html += `<p style="color:var(--ink-soft)">No trip notes yet.</p>`;
   const nextOpeners = DATA.seasons.flatMap(s => s.ranges.map(r =>
       ({name:s.name, start:r.start})))
     .filter(o => o.start >= today).sort((a,b) => a.start < b.start ? -1 : 1)

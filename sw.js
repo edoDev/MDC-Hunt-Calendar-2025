@@ -29,6 +29,11 @@ self.addEventListener("activate", e => {
 
 self.addEventListener("fetch", e => {
   const url = new URL(e.request.url);
+  /* only handle our own origin + the pinned CDN script; let everything else
+     (e.g. analytics pings) hit the network untouched and uncached */
+  const cdn = "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/";
+  if (url.origin !== self.location.origin && !e.request.url.startsWith(cdn))
+    return;
   const freshFirst =
     e.request.mode === "navigate" ||          /* the app shell itself */
     url.pathname.endsWith(".json");           /* season data + manifest */
