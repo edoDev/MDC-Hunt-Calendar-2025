@@ -118,6 +118,19 @@
   #report.show{display:block;}
   #report h3{font-size:22px;} #report h4{margin:10px 0 4px; font-size:16px;}
   #report p,#report li{font-size:13.5px; margin:2px 0;}
+  .ev{font-size:10px; padding:1px 5px; border-radius:2px; color:#fff;
+    font-weight:700; letter-spacing:.03em; vertical-align:middle;}
+  .ev.strong{background:#2E6B34;} .ev.moderate{background:#B98A00;}
+  .ev.weak{background:#8A94A6;}
+  .chipwrap{display:inline-flex; flex-wrap:wrap; gap:3px;}
+  .chipwrap label{font-size:11.5px; border:1px solid var(--ink-soft);
+    border-radius:2px; padding:1px 5px; cursor:pointer; background:#fff;}
+  .chipwrap input{display:none;}
+  .chipwrap input:checked + span{font-weight:700; color:#fff;}
+  .chipwrap label:has(input:checked){background:var(--personal);
+    border-color:var(--personal);}
+  .huntable{color:#2E6B34; font-weight:700;}
+  .nowind{color:#B4231F; font-weight:700;}
 
   @media (max-width:640px){
     .day{min-height:60px;} header h1{font-size:26px;}
@@ -153,6 +166,7 @@
     </select>
   </label>
   <button id="btnHelp">Help</button>
+  <button id="btnCraft">Field craft</button>
   <button id="btnScout">Scouting</button>
   <button id="btnReport">Scouting report</button>
   <button id="btnPng">Download PNG</button>
@@ -176,11 +190,23 @@
     </select>
     <input type="text" id="locCoords" placeholder="lat,lon (optional)"
       aria-label="Coordinates">
+    <span class="chipwrap" id="locWinds" aria-label="Good winds for this location"
+      title="Winds that carry YOUR scent away from where deer approach"></span>
     <button id="btnAddLoc">Add location</button>
     <span style="flex:1"></span>
     <button id="btnExport">Export JSON</button>
     <button id="btnImport">Import JSON</button>
     <input type="file" id="importFile" accept=".json" style="display:none">
+  </div>
+  <div class="sform">
+    <label style="font-size:13px;">Today's wind (from):
+      <select id="windToday" aria-label="Today's wind direction">
+        <option value="">not set</option>
+      </select>
+    </label>
+    <span class="note" style="margin:0;">Enter the wind and stands below show
+      hunt-able ✓ or wait ✗ — the single strongest call you can make.
+      See <strong>Field craft</strong> for why. (LOG — your entry, not a forecast)</span>
   </div>
   <table id="locTable" aria-label="Location registry"></table>
   <div class="note">To plan a session or log an observation, click a calendar
@@ -228,8 +254,13 @@
   <p><strong>Scouting</strong> opens your location registry (stands, cameras,
   access points). Click a calendar day to plan a session (○) or log an
   observation (●). Dotted circles mark suggested scouting windows — general
-  practice, not MDC guidance. <strong>Scouting report</strong> builds a
-  printable per-species summary with gaps and your next openers.</p>
+  practice, not MDC guidance. Tag each stand with its good winds, set today's
+  wind, and stands show hunt-able ✓ or wait ✗. <strong>Scouting report</strong>
+  builds a printable per-species summary with gaps and your next openers.</p>
+  <p>New to reading these signals? Open <strong>Field craft</strong> — it
+  explains which factors actually decide a hunt (wind, time, rut) and which are
+  overrated noise (moon phase), so you weigh data honestly instead of chasing
+  every indicator.</p>
 
   <h4 class="disp" style="margin:10px 0 2px;">Your data lives on this device</h4>
   <p>Scouting data is stored only in this browser. It does not sync.
@@ -239,6 +270,78 @@
   <p style="margin-top:10px; font-size:12.5px; color:var(--ink-soft);">
   Not a legal document. Always verify at mdc.mo.gov before hunting.</p>
   <button onclick="document.getElementById('help').close()"
+    style="margin-top:8px;">Close</button>
+</dialog>
+
+<dialog id="craft" aria-label="Field craft" style="max-width:620px;
+  border:2px solid var(--ink); border-radius:4px; padding:18px 20px;
+  background:var(--panel); color:var(--ink); font-size:14px; line-height:1.55;">
+  <h3 class="disp" style="font-size:22px; margin-bottom:4px;">Field Craft —
+    reading the signals</h3>
+  <p style="color:var(--ink-soft); margin-bottom:10px;">This app shows you data
+    so you can think like the animal, not so you can obey a number. Below is how
+    much weight each signal actually deserves. The honest truth of hunting:
+    <strong>a few factors decide almost everything, and the rest is noise that
+    feels like signal.</strong></p>
+
+  <h4 class="disp" style="margin:10px 0 2px;">
+    Wind <span class="ev strong">STRONG</span></h4>
+  <p>A deer's nose is its life. It processes scent in ways that make our sense of
+    smell look broken, and a whitetail that smells you doesn't spook once — it
+    learns that spot and avoids it for weeks. Wind is the one variable you fully
+    control by choosing where to sit. <strong>Play the wrong wind on your best
+    stand and you don't just blow the sit — you educate the herd and burn the
+    location.</strong> This is why the disciplined answer is sometimes "don't
+    hunt today." Tag each stand with the winds that carry your scent
+    <em>away</em> from where deer approach, and let the app tell you what's
+    hunt-able.</p>
+
+  <h4 class="disp" style="margin:10px 0 2px;">
+    Time of day <span class="ev strong">STRONG</span></h4>
+  <p>Deer and bear are crepuscular — built for dawn and dusk, when low light
+    favors prey escaping predators. The prime windows the app shades are where
+    most daylight movement happens. During the rut, midday movement rises as
+    bucks cruise for does, which is the one time all-day sits pay off.</p>
+
+  <h4 class="disp" style="margin:10px 0 2px;">
+    The rut <span class="ev strong">STRONG</span></h4>
+  <p>For a couple of weeks in November, mature bucks abandon the caution that
+    kept them nocturnal all year. This is the single biggest predictor of daylight
+    buck movement in the whole season — the rare case where the calendar itself
+    is the tip.</p>
+
+  <h4 class="disp" style="margin:10px 0 2px;">
+    Cold fronts & pressure <span class="ev moderate">MODERATE</span></h4>
+  <p>A sharp temperature drop after a front often triggers a feeding surge, and
+    hunters report good movement on those days. The effect is real but variable —
+    a helpful tiebreaker between two hunt-able days, not a reason to override
+    wind.</p>
+
+  <h4 class="disp" style="margin:10px 0 2px;">
+    Moon phase <span class="ev weak">WEAK</span></h4>
+  <p>This is the honesty test. Folk wisdom and commercial apps sell moon-phase
+    "prediction," but GPS-collar studies have largely failed to find a
+    consistent effect on daylight movement or harvest. We show the moon because
+    it's real and mildly useful for planning legal light and midnight feeding —
+    <strong>not because it tells you when to hunt.</strong> If a feature promises
+    to rank your days by moon, be skeptical.</p>
+
+  <h4 class="disp" style="margin:10px 0 2px;">Putting it together</h4>
+  <p>Think of it as filters, not a score. <strong>First:</strong> does a stand
+    play this wind? If no stand does, that's your answer. <strong>Then:</strong>
+    are you there for a prime window, or the rut? <strong>Then, and only to break
+    a tie:</strong> is a front coming? Everything else — moon, "best day"
+    calculators, gadgets — is background. Stacking ten weak indicators doesn't
+    make a strong one; it just makes noise you'll mistake for confidence. The
+    only true end-all would be knowing exactly where the animal is, and no legal
+    tool gives you that — which is why woodsmanship, not data, is still the
+    hunter's real edge. The data just helps you ask better questions of the
+    woods.</p>
+
+  <p style="margin-top:10px; font-size:12.5px; color:var(--ink-soft);">
+    Evidence tiers reflect the weight of GPS-collar and harvest research as of
+    2026, summarized in good faith — not a substitute for time in the woods.</p>
+  <button onclick="document.getElementById('craft').close()"
     style="margin-top:8px;">Close</button>
 </dialog>
 
@@ -400,7 +503,9 @@ function sunTimes(date, lat, lon){
   const r = calc(true), s = calc(false);
   const shift = (d,min) => d ? new Date(d.getTime()+min*6e4) : null;
   return {rise:fmt(r), set:fmt(s),
-    legalOpen:fmt(shift(r,-30)), legalClose:fmt(shift(s,30))};
+    legalOpen:fmt(shift(r,-30)), legalClose:fmt(shift(s,30)),
+    primeAM:`${fmt(shift(r,-30))}–${fmt(shift(r,120))}`,
+    primePM:`${fmt(shift(s,-120))}–${fmt(shift(s,30))}`};
 }
 
 /* ---------- state ---------- */
@@ -434,6 +539,31 @@ const SCOUT_WINDOWS = [
    label:"Pre-firearms stand audit (before Nov 14 opener)"}
 ];
 const winOn = iso => SCOUT_WINDOWS.filter(w => iso >= w.start && iso <= w.end);
+
+/* ---------- wind (H1: stand-wind matcher — personal entry, LOG) ---------- */
+const DIRS = ["N","NE","E","SE","S","SW","W","NW"];
+const WKEY = "mdc_wind_v1";
+const todayISO = () => d2s(new Date(Date.now() -
+  new Date().getTimezoneOffset()*6e4));
+function windToday(){
+  try{ const w = JSON.parse(localStorage.getItem(WKEY));
+    if (w && w.date === todayISO()) return w.dir; }catch(e){}
+  return "";
+}
+function setWind(dir){
+  localStorage.setItem(WKEY, JSON.stringify({date:todayISO(), dir}));
+}
+function initWindUI(){
+  const chips = document.getElementById("locWinds");
+  chips.innerHTML = DIRS.map(d =>
+    `<label><input type="checkbox" value="${d}"><span>${d}</span></label>`).join("");
+  const sel = document.getElementById("windToday");
+  sel.innerHTML = `<option value="">not set</option>` +
+    DIRS.map(d => `<option>${d}</option>`).join("");
+  sel.value = windToday();
+  sel.onchange = () => { setWind(sel.value); render(); };
+}
+initWindUI();
 
 /* ---------- render ---------- */
 function render(){
@@ -473,12 +603,20 @@ function renderScoutPanel(){
       add stands, cameras, and access points above.</td></tr>`;
     return;
   }
+  const wt = windToday();
   t.innerHTML = `<tr><th>Name</th><th>Type</th><th>Coords</th>
-    <th>Entries</th><th></th></tr>` +
+    <th>Good winds</th><th>Now</th><th>Entries</th><th></th></tr>` +
     SCOUT.locations.map(l => {
       const n = SCOUT.entries.filter(e => e.loc === l.id).length;
+      const winds = (l.winds && l.winds.length) ? l.winds.join(" ") : "—";
+      let now = "";
+      if (wt && l.winds && l.winds.length)
+        now = l.winds.includes(wt)
+          ? `<span class="huntable">\u2713 hunt</span>`
+          : `<span class="nowind">\u2717 wait</span>`;
       return `<tr><td>${esc(l.name)}</td><td>${esc(l.type)}</td>
-        <td>${esc(l.coords || "—")}</td><td>${n}</td>
+        <td>${esc(l.coords || "—")}</td><td>${esc(winds)}</td>
+        <td>${now}</td><td>${n}</td>
         <td><button class="xbtn" data-del-loc="${l.id}"
           aria-label="Delete ${esc(l.name)}">\u2715</button></td></tr>`;
     }).join("");
@@ -585,9 +723,32 @@ function showDetail(iso, date){
   html += `<div class="row">Sunrise ${sun.rise} · Sunset ${sun.set} ·
     Legal light (½ hr rule): ${sun.legalOpen}–${sun.legalClose}
     <span class="meta">(computed — MODEL)</span></div>`;
-  html += `<div class="row meta">Moon: ${moonInfo(date).name} (model). `;
+  html += `<div class="row">Prime movement windows
+    <span class="ev strong">EVIDENCE: STRONG</span>:
+    ${sun.primeAM} and ${sun.primePM}
+    <span class="meta">— deer & bear are crepuscular; see Field craft.
+    Midday improves during rut.</span></div>`;
+  if (iso === todayISO()){
+    const wt = windToday();
+    if (wt){
+      const good = SCOUT.locations.filter(l =>
+        l.winds && l.winds.includes(wt)).map(l => l.name);
+      const tagged = SCOUT.locations.some(l => l.winds && l.winds.length);
+      html += `<div class="row">Wind today: <strong>${wt}</strong> — ` +
+        (good.length
+          ? `hunt-able: <span class="huntable">${good.map(esc).join(", ")}</span>`
+          : tagged
+            ? `<span class="nowind">no tagged stand favors this wind — the
+               disciplined call is often not to sit</span>`
+            : `<span class="meta">tag your stands with good winds in
+               Scouting to use this</span>`) +
+        ` <span class="ev strong">EVIDENCE: STRONG</span></div>`;
+    }
+  }
+  html += `<div class="row meta">Moon: ${moonInfo(date).name} (model)
+    <span class="ev weak">EVIDENCE: WEAK</span>. `;
   if (iso >= rut.peak_start && iso <= rut.peak_end)
-    html += `Rut peak window — ${rut.note}`;
+    html += `Rut peak window <span class="ev strong">EVIDENCE: STRONG</span> — ${rut.note}`;
   html += `</div>`;
   winOn(iso).forEach(w => {
     html += `<div class="row meta" style="color:var(--personal)">
@@ -702,6 +863,8 @@ netBadge();
 /* ---------- help ---------- */
 document.getElementById("btnHelp").onclick = () =>
   document.getElementById("help").showModal();
+document.getElementById("btnCraft").onclick = () =>
+  document.getElementById("craft").showModal();
 
 /* ---------- scouting UI wiring ---------- */
 document.getElementById("btnScout").onclick = () =>
@@ -713,9 +876,12 @@ document.getElementById("btnAddLoc").onclick = () => {
   if (coords && !/^-?\d{1,2}(\.\d+)?\s*,\s*-?\d{1,3}(\.\d+)?$/.test(coords))
     return alert("Coordinates should look like 38.2834,-90.3951 (or leave blank).");
   SCOUT.locations.push({id:uid(), name,
-    type:document.getElementById("locType").value, coords});
+    type:document.getElementById("locType").value, coords,
+    winds:[...document.querySelectorAll("#locWinds input:checked")]
+      .map(i => i.value)});
   document.getElementById("locName").value = "";
   document.getElementById("locCoords").value = "";
+  document.querySelectorAll("#locWinds input").forEach(i => i.checked = false);
   saveScout(); render();
 };
 document.getElementById("btnExport").onclick = () => {
